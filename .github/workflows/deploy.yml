@@ -1,0 +1,55 @@
+# Bygger Skogsskolan (appen + 34 tryckfiler) och publicerar på Firebase Hosting.
+# Kräver repo-hemligheten FIREBASE_SERVICE_ACCOUNT (JSON-nyckel för ett tjänstekonto) och
+# variabeln FIREBASE_PROJECT_ID (Settings → Secrets and variables → Actions).
+name: Publicera webbplatsen
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['src/**', 'assets/**', 'tools/press.py', 'firebase.json', '.github/workflows/deploy.yml']
+concurrency: { group: deploy, cancel-in-progress: true }
+jobs:
+  deploy:
+    # hoppar över tills Firebase är uppsatt (variabeln FIREBASE_PROJECT_ID finns)
+    if: ${{ vars.FIREBASE_PROJECT_ID != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Verktyg
+        run: |
+          pip install playwright pillow numpy pypdf
+          python -m playwright install --with-deps chromium
+          npm i --no-save page-flip@2.0.7
+      - name: Bygg appen
+        run: python src/build.py
+      - name: Vilka tryckfiler har ändrats?
+        # jämför med det som ligger publicerat; oförändrade PDF:er hämtas i stället för att byggas om
+        env:
+          SITE: https://${{ vars.FIREBASE_PROJECT_ID }}.web.app
+        run: |
+          mkdir -p dist/print
+          curl -fsS "$SITE/print/build.json" -o old-build.json || : > old-build.json
+          if ! curl -fsS "$SITE/print/manifest.json" -o dist/print/manifest.json; then rm -f dist/print/manifest.json; : > old-build.json; fi
+          python tools/press_plan.py old-build.json > rebuild.txt
+          for id in $(python -c "import json;print(' '.join(json.load(open('dist/print/build.json'))['books']))"); do
+            grep -qx "$id" rebuild.txt && continue
+            curl -fsS "$SITE/print/$id.pdf" -o "dist/print/$id.pdf" || echo "$id" >> rebuild.txt
+          done
+          echo "Byggs om: $(sort -u rebuild.txt | tr '\n' ' ')"
+      - name: Bygg tryckfilerna som ändrats
+        run: |
+          ids=$(sort -u rebuild.txt | tr '\n' ' ')
+          if [ -n "${ids// /}" ]; then python tools/press.py $ids; else echo "Inga tryckfiler behöver byggas om"; fi
+      - name: Sätt ihop webbplatsen
+        run: bash tools/web.sh
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          channelId: live

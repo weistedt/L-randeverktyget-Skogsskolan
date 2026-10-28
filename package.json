@@ -1,0 +1,1 @@
+{ "name": "skogsskolan", "private": true, "description": "Byggs med python3 src/build.py", "devDependencies": { "page-flip": "2.0.7" } }

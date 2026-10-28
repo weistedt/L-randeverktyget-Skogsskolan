@@ -1,0 +1,56 @@
+g1 apple,acorn,leaf,mushroom,ladybug,-,pinecone,blueberry_old,strawberry -
+g2 banana,bread,milk,icecream,cookie,carrot,cheese,bun,egg -
+g3 fish,bird,cat,dog,hen,cow,pig,sheep,moose -
+g4 hedgehog,hare,bear,frog,lion,panda,penguin,kangaroo,elephant -
+g5 ball,-,boat,house,tree,bike,train,pencil,book -
+g6 hat,mitten,sock,boot,tshirt,scarf,umbrella,flower,daisy -
+g7 car,sun_old,cloud,rain,snow,moon_old,star_old,heart,basket -
+g8a paw_matte,paw_svenska,paw_eng,paw_geo,paw_brown,paw_white,badge_check_bright,star_gold,rosette - #förkastad: för färgstark
+g8 paw_moss,paw_bark,paw_lichen,paw_pine,paw_sand,paw_heather,badge_check,star_soft,- -
+g9 pkg_r,pkg_b,pkg_y,-,-,-,mouse,-,- -
+# g9 innehåller även fjäder, sten, vedträ, mus, pumpa, hink (ej utskurna än)
+g10 happy,sad,angry,sleepy,surprised,parrot,-,-,- -
+g11 act_jump,act_sleep,act_run,act_climb,act_sing,act_swim,act_eat,act_dig,act_dance -
+g12 -,-,k_in_box,k_behind_box,-,k_beside_box,k_between,k_on_box,- -
+g13 land_forest,land_lake,land_mountain,land_sea,land_field,land_town,land_beach,land_river,land_snow -
+g14 side_house,-,side_car,top_house,-,top_car,-,-,top_pond -
+g15 sunhat,-,shorts,raincoat,rainboots,winterjacket,swimsuit,sandals,sweater -
+g16 -,-,-,-,-,k_above_box,k_left_of_box,k_in_basket,k_on_chair -
+g17 side_tree,side_boat,side_table,top_tree,top_boat,top_table,-,top_trampoline,- -
+g18 -,-,-,-,-,-,-,-,- -
+g19 globe_eu,globe_am,globe_as,-,map3d,backpack,lighthouse,tent,binoculars -
+g20 egg_basket2,-,egg_basket4,basket_empty,-,-,stick,blueberry,- -
+# g20: mittenkorgen har 4 ägg (inte 3), äggkartongen 9 ägg och buntens antal pinnar går inte att lita på – används inte. Antal byggs i stället med kod av enskilda bilder.
+g21 scale_tilt,-,-,-,cube,-,hand5,sun,moon -
+# g21: alla tre vågarna lutar lika lite, stången har 8 kuber och plattan 6×6 – används inte
+g22 wfox,wowl,wsquirrel,badger,lynx,deer,boar,butterfly,star -
+g23 -,-,donkey,xylophone,axe,zebra,wok,eagle,seal -
+g24 kit_eat,kit_play,kit_sleep,boat_red,boat_blue,boat_yellow,snowman,cone,boulder -
+g25 note_lila,note_orange,note_blue,-,-,-,house_red,house_blue,house_yellow -
+# g25: mittenraden har bara två mynt (guld, silver) – skurna för hand till coin_gold, coin_silver (se tools/icons.py MANUAL)
+g26 kite,door,doll,henhouse,nutbag,spider,feather,wagon,woolhat -
+g27 shoe,chair,swan,key,bone,icecube,nest,pan,glasses -
+g28 snail,flysvamp,spoon,shirt,skirt,church,pancakes,bowl,cake -
+g29 horse,sweater_red,sweater_blue,milkglass,dlcup,compass,bill_lila,bill_orange,bill_blue -
+g30 -,-,-,mirror,hook,arrow,dishes,goose,seagull -
+# g30: katten på bordet blev en pall och bakom-katten satt bredvid lådan – de två komponeras i stället i tools/compose_kitten.py
+# g30: k_above_box skuren för hand (katt + låda) så att lådan kommer med
+g31 day_sky,swim_duck,cardbox,polarbear,camel,cactus,palm,toucan,igloo -
+g32 bottle,jar,newspaper,-,battery,bulb,tap,toothbrush,envelope -
+# g32: bananskalet blev hela bananer – används inte
+g37 -,-,sunglasses,leaf_autumn,-,-,monkey,-,- -
+g38 room_bed,room_rug,room_shelf,room_chair,room_chest,room_desk,room_plant,room_armchair,room_table -
+# leaf_autumn i g37 är utskuren för hand med färgtröskel (rembg tappar stjälken) – skär inte om den med icons.py
+x1 frogspawn,-,-,caterpillar,chrysalis,beanseed,sprout,seedling,ant -
+x2 birch,spruce,pine,oak,leaf_birch,leaf_oak,leaf_maple,anthill,beehive -
+x3 birch_spring,birch_summer,birch_autumn,birch_winter,-,worm,bee,leafpile,- -
+x4 ped_red,ped_green,reflector,helmet,lifejacket,-,mobile,medicine,cleanspray -
+x5 matches,hotstove,whistle,plaster,icecream_drop,present,toy_broken,glassjar,paperbag -
+x6 tadpole,tadpole_legs,-,hedgehog_sleep,bear_den,hare_winter,crosswalk,apple_core,tincan -
+x7 smoke_alarm,flame,smoke,-,stairs,elevator,alarm_clock,doorbell,- -
+x8 -,-,fire_engine,police,paramedic,firefighter,firefighter_mask,-,- -
+x9 -,ambulance,-,-,-,-,-,-,- -
+x10 police_car,-,-,-,-,-,-,-,- -
+x11 phone_call,car_seat,bus,truck,stroller,-,parked_cars,-,- -
+x12 tablet,game_controller,ice,lighter,first_aid,teddy,tap_water,-,candle -
+# g10b scared och calm är handskurna (rutorna (185,400,415,615) och (400,400,630,615)) ur -

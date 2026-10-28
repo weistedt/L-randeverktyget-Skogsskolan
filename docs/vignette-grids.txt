@@ -1,0 +1,11 @@
+# Bildval (2x2) till Trygghet. Rutorna uppifrån vänster, rad för rad. tools/vignettes.py
+vt1 zebra,parkerade,kurva,buss_star -
+vt2 lekplats,gata,parkering,tradgard -
+vt3 buss_borta,lastbil_svanger,-,landsvag -
+vt4 mamma_barnvagn,bil_vinkar,butik,folk_skyndar -
+vk1 ivar_glad,ivar_ledsen,ivar_arg,ivar_radd -
+vk1b -,-,-,ivar_radd -   # tydligare rädd (2026-10-28)
+vk2 vinka,highfive,hej,- -
+vk3 kittlar,stopp_hand,brottas,lyssnar_grav -
+vk4 vuxen_lyssnar,vuxen_trostar,viskar,doktor -
+vt5 is,-,tilde,butik2 -

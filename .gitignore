@@ -1,0 +1,27 @@
+node_modules/
+src/chars.js
+dist/local.html
+__pycache__/
+*.pyc
+tools/out/
+dist/pdf/
+dist/*.zip
+dist/print/*.pdf
+dist/test.html
+dist/web/
+tools/local.html
+tools/v3/
+dist/print/build.json
+
+# privat: arbetsanteckningar, granskningar och bildadresser hålls utanför det publika repot
+dist/
+privat/
+LAGESBESKRIVNING.md
+README.md
+docs/granskning/
+docs/HANDOFF.md
+docs/serieplan.md
+docs/recraft*.md
+docs/mockup-urls.txt
+docs/cover-hi-urls.txt
+*handover*.md

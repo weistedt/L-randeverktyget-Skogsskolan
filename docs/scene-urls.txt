@@ -1,0 +1,33 @@
+# Berättelsescener (image_edit gemini_25_flash_image, 16:9, 5 krediter st). Referens: grundfigurerna i recraft.md + owl_nobook.
+owl_nobook -
+sc_kotte -
+sc_bok_lov -   (2026-10-28: Otto letar i lövhögen, ingen kotte)
+sc_bok_sten -
+sc_bok_fraga -
+sc_bok_bo -
+sc_halsduk_a - #förkastad: prickig halsduk
+sc_halsduk -
+sc_siri_hem -
+sc_regn -
+sc_back -
+sc_karta -
+sc_storm - #ordet "wait!" i himlen målas över i mkscenes.py
+sc_kalas - #tårtan har 10 ljus (två försök att få 7 misslyckades) – texten nämner därför ingen ålder eller antal ljus
+# Känslor (image_edit 1:1, frilagda med tools/proc.py -> src/img/icon_feel_*.webp)
+feel_happy -
+feel_sad -
+feel_angry -
+feel_sleepy -
+feel_surprised -
+sc_park - #generate_image recraftv4_1_raster 5:4 (2 krediter): parken uppifrån till Siris karta, exakt tre träd
+sc_rum - #generate_image 5:4: Ebbas rum uppifrån (G2 Uppifrån)
+sc_skatt - #generate_image 1:1: skattkarta, 5×5-rutnät läggs över i koden (huset C3, krysset D4)
+sc_skog - #sökbild G3: älg, uggla, ekorre, hare, räv, igelkott (exakt 6, kontrollerat)
+sc_norrsken - #G3 Ljust och mörkt i norr
+sc_stopp -
+sc_vinka -
+sc_hemlis -
+sc_vilse -
+sc_bad -
+sc_rok -
+sc_koja -

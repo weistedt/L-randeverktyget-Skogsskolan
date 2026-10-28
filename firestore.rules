@@ -1,0 +1,13 @@
+rules_version = '2';
+// Skogsskolan: varje inloggad familj läser och skriver bara sina egna dokument,
+// data/users/<uid>/familj och data/users/<uid>/<barn>~<bok>. Inget annat är öppet.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /data/users/{uid}/{docId} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && docId.size() <= 40
+        && request.resource.data.keys().size() <= 12;
+    }
+  }
+}
