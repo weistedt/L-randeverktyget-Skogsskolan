@@ -13,7 +13,8 @@ g10 happy,sad,angry,sleepy,surprised,parrot,-,-,- -
 g11 act_jump,act_sleep,act_run,act_climb,act_sing,act_swim,act_eat,act_dig,act_dance -
 g12 -,-,k_in_box,k_behind_box,-,k_beside_box,k_between,k_on_box,- -
 g13 land_forest,land_lake,land_mountain,land_sea,land_field,land_town,land_beach,land_river,land_snow -
-g14 side_house,-,side_car,top_house,-,top_car,-,-,top_pond -
+g14 side_house,-,side_car,-,-,top_car,-,-,top_pond -
+# top_house: egen Recraft-bild (hustak rakt uppifrån), utskuren för hand 2026-10-29 – skärs inte ur g14 längre
 g15 sunhat,-,shorts,raincoat,rainboots,winterjacket,swimsuit,sandals,sweater -
 g16 -,-,-,-,-,k_above_box,k_left_of_box,k_in_basket,k_on_chair -
 g17 side_tree,side_boat,side_table,top_tree,top_boat,top_table,-,top_trampoline,- -
