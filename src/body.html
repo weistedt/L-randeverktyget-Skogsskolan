@@ -1,4 +1,6 @@
+<script>try{if(localStorage.getItem('skogsskolan-rd')!=='0')document.documentElement.classList.add('rd')}catch(e){document.documentElement.classList.add('rd')}</script>
 <main class="shelf" id="shelf">
+  <div class="rd-scene" id="rdScene" aria-hidden="true"></div>
   <header class="hero"><div class="hero-img" id="heroArt"></div>
     <div class="hero-in"><div><p class="hero-kick">Med Ebba, Otto, Ruben och Siri</p><h1>Skogsskolan</h1><p class="hero-sub">Lärböcker att bläddra i, skriva i och skriva ut.</p></div><div class="who" id="who"></div><button class="hero-bb" data-open-binderi=""><span class="hero-bb-art" id="heroBB" aria-hidden="true"></span><span class="hero-bb-t"><small>Bokbinderiet</small><b>Gör en riktig bok</b></span><svg class="hero-bb-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
   </header>
@@ -56,6 +58,7 @@
   </div>
 </div>
 <div class="binderi" id="binderi" hidden role="dialog" aria-modal="true" aria-labelledby="bbTitle">
+  <div class="rd-bbscene" aria-hidden="true"></div>
   <div class="bb-bar">
     <button class="back" id="bbClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Tillbaka</button>
     <div class="bb-brand"><span>Skogsskolan</span><h2 id="bbTitle">Bokbinderiet</h2></div>

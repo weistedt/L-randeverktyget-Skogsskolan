@@ -57,9 +57,9 @@ cj += "const HEROIMG=" + json.dumps(extra) + ";\nconst ICONIMG=" + json.dumps(ic
 cj += (S / 'chars-tail.js').read_text()
 (S / 'chars.js').write_text(cj)
 
-css = (S / 'palette.css').read_text() + '\n' + (S / 'style.css').read_text()
+css = (S / 'palette.css').read_text() + '\n' + (S / 'style.css').read_text() + '\n' + (S / 'redesign.css').read_text()
 ORDER = ['glyphs.js', 'art.js', 'art2.js', 'chars.js', 'geodata.js', 'write.js', 'pages.js', 'c-common.js', 'c-matte.js',
-         'c-svenska.js', 'c-eng.js', 'c-geo.js', 'geo-eur.js', 'c-level4.js', 'c-level5.js', 'c-mer.js', 'c-tryg.js', 'c-catalog.js', 'press.js', 'firebase-config.js', 'family.js', 'app.js', 'binderi.js']
+         'c-svenska.js', 'c-eng.js', 'c-geo.js', 'geo-eur.js', 'c-level4.js', 'c-level5.js', 'c-mer.js', 'c-tryg.js', 'c-catalog.js', 'press.js', 'firebase-config.js', 'family.js', 'app.js', 'binderi.js', 'scene.js']
 js = '\n'.join((S / f).read_text() for f in ORDER)
 head = '<title>Skogsskolan</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'
 PFJS = '<script>\n' + (S / 'vendor' / 'page-flip.browser.js').read_text() + '\n</script>'  # inbäddad och patchad (se vendor/)

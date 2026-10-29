@@ -1,0 +1,151 @@
+/* ===================== Redesign "Skogsstigen" (2026-10-29) =====================
+   Allt gäller under html.rd så att förhandsvisningen kan växla före/efter.
+   Princip: naturen är bakgrunden, inte vita kort. Glas (genomskinligt + oskärpa)
+   i stället för vita brickor, text direkt på scenen med en mjuk ljus gloria. */
+html.rd{--glass:color-mix(in srgb,var(--card) 42%,transparent); --glass-2:color-mix(in srgb,var(--card) 68%,transparent); --glass-line:color-mix(in srgb,#fff 55%,transparent); --halo:0 0 10px var(--bg),0 0 3px var(--bg),0 0 1px var(--bg)}
+@media (prefers-color-scheme: dark){html.rd:not([data-theme="light"]){--glass-line:color-mix(in srgb,#fff 10%,transparent)}}
+html.rd[data-theme="dark"]{--glass-line:color-mix(in srgb,#fff 10%,transparent)}
+.rd-scene,.rd-bbscene,.rd-toggle{display:none}
+html.rd .rd-scene{display:block}
+
+/* ---------- Scenen (fast bakgrund) ---------- */
+.rd-scene{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; contain:strict; background:var(--bg)}
+.rd-l{position:absolute; inset:-3%; background-size:cover; background-position:center 58%; opacity:0; transition:opacity 1.8s ease; will-change:opacity}
+.rd-l.on{opacity:1}
+/* Slöjan: tät där böckerna står, glesare mot kanterna så att naturen syns. */
+.rd-veil{position:absolute; inset:0; background:
+  radial-gradient(70% 62% at 50% 52%,color-mix(in srgb,var(--bg) 74%,transparent) 0%,color-mix(in srgb,var(--bg) 52%,transparent) 70%,color-mix(in srgb,var(--bg) 30%,transparent) 100%)}
+@media (max-width:700px){.rd-veil{background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 40%,transparent) 0%,color-mix(in srgb,var(--bg) 64%,transparent) 28%,color-mix(in srgb,var(--bg) 70%,transparent) 100%)}}
+.rd-rays{position:absolute; inset:-20% -30%; opacity:.0; background:repeating-linear-gradient(112deg,transparent 0 9%,rgba(255,246,214,.22) 11%,transparent 15% 24%); transform-origin:30% 0}
+.rd-scene[data-s="host"] .rd-rays,.rd-scene[data-s="gran"] .rd-rays,.rd-scene[data-s="var"] .rd-rays{opacity:.6}
+.rd-parts{position:absolute; inset:0}
+.rd-p{position:absolute; left:var(--x); display:none}
+.rd-scene[data-p="leaf"] .rd-p.leaf,.rd-scene[data-p="petal"] .rd-p.petal,.rd-scene[data-p="mote"] .rd-p.mote,.rd-scene[data-p="fly"] .rd-p.fly{display:block}
+.rd-p.leaf,.rd-p.petal{top:-10%; width:calc(46px * var(--s))}
+.rd-p.leaf img,.rd-p.petal img{width:100%; display:block; filter:drop-shadow(0 6px 6px rgba(40,30,10,.18))}
+.rd-p.mote{top:var(--y); width:calc(7px * var(--s)); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,rgba(255,250,225,.95) 0,rgba(255,240,190,.55) 40%,transparent 70%)}
+.rd-p.fly{top:var(--y); width:calc(9px * var(--s)); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,#FFF6C8 0,rgba(255,214,110,.75) 35%,transparent 70%)}
+@media (prefers-reduced-motion:no-preference){
+ .rd-l.on{animation:rdBreath 38s ease-in-out infinite alternate}
+ .rd-rays{animation:rdRays 14s ease-in-out infinite alternate}
+ .rd-p.leaf,.rd-p.petal{animation:rdFall var(--d) linear var(--w) infinite}
+ .rd-p.leaf img,.rd-p.petal img{animation:rdSway calc(var(--d) / 4) ease-in-out var(--w) infinite alternate}
+ .rd-p.mote{animation:rdRise var(--d) ease-in-out var(--w) infinite}
+ .rd-p.fly{animation:rdFly var(--d) ease-in-out var(--w) infinite alternate}
+}
+@media (prefers-reduced-motion:reduce){.rd-parts,.rd-rays{display:none}}
+html.rd-paused .rd-scene *{animation-play-state:paused!important}
+@keyframes rdBreath{from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.07) translate3d(-1.2%,-1%,0)}}
+@keyframes rdRays{from{transform:translate3d(-3%,0,0) rotate(0deg)}to{transform:translate3d(3%,0,0) rotate(2deg)}}
+@keyframes rdFall{0%{transform:translate3d(0,0,0); opacity:0}8%{opacity:.95}88%{opacity:.95}100%{transform:translate3d(0,118vh,0); opacity:0}}
+@keyframes rdSway{from{transform:translate3d(calc(var(--sw) * -1),0,0) rotate(-28deg)}to{transform:translate3d(var(--sw),0,0) rotate(34deg)}}
+@keyframes rdRise{0%{transform:translate3d(0,0,0) scale(.6); opacity:0}30%{opacity:.9}70%{opacity:.7}100%{transform:translate3d(14px,-26vh,0) scale(1.1); opacity:0}}
+@keyframes rdFly{0%{transform:translate3d(0,0,0); opacity:.1}35%{opacity:1}55%{opacity:.25}100%{transform:translate3d(28px,-34px,0); opacity:.9}}
+
+/* Innehållet ovanpå scenen */
+html.rd body{background:var(--bg)}
+html.rd .shelf{position:relative}
+html.rd .shelf>.hero,html.rd .shelf>.wrap{position:relative; z-index:1}
+
+/* ---------- Hero ---------- */
+html.rd .hero{background:transparent}
+html.rd .hero::before{background:linear-gradient(90deg,color-mix(in srgb,var(--bg) 88%,transparent) 0%,color-mix(in srgb,var(--bg) 66%,transparent) 26%,transparent 50%)}
+html.rd .hero-img{-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 100%); mask-image:linear-gradient(180deg,#000 72%,transparent 100%)}
+html.rd .who{background:var(--glass); backdrop-filter:blur(14px) saturate(1.15); -webkit-backdrop-filter:blur(14px) saturate(1.15); box-shadow:inset 0 0 0 1px var(--glass-line)}
+html.rd .who button[aria-pressed="true"]{background:color-mix(in srgb,var(--card) 82%,transparent); box-shadow:none}
+html.rd .who button:not([aria-pressed="true"]) i{background:color-mix(in srgb,var(--card) 55%,transparent)}
+/* Bokbinderiet i heron: en lugn textlänk, ingen bricka */
+html.rd .hero-bb{background:none; backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:none; padding:4px 6px 4px 0; gap:10px; color:var(--fg)}
+html.rd .hero-bb:hover{background:none; box-shadow:none}
+html.rd .hero-bb-t small{display:none}
+html.rd .hero-bb-t b{font-size:1rem; text-decoration:underline; text-decoration-color:color-mix(in srgb,var(--fg) 30%,transparent); text-underline-offset:.22em; text-decoration-thickness:1.5px}
+html.rd .hero-bb-art{width:52px; height:38px}
+html.rd .hero-bb-art span{width:52px!important; height:38px!important}
+html.rd .hero-bb-art svg.ic{width:52px!important}
+@supports (animation-timeline:scroll()){
+ @media (prefers-reduced-motion:no-preference){
+  html.rd .hero-img img{animation:rdHeroPar linear both; animation-timeline:scroll(root); animation-range:0 90vh}
+ }
+}
+@keyframes rdHeroPar{to{transform:translate3d(0,14%,0) scale(1.04)}}
+
+/* Framsteg: glasremsa utan kant, ingen tass-förklaring (den står på varje bok) */
+html.rd .progress{background:var(--glass); backdrop-filter:blur(14px) saturate(1.15); -webkit-backdrop-filter:blur(14px) saturate(1.15); border:0; box-shadow:inset 0 0 0 1px var(--glass-line); justify-content:center; gap:10px 34px; margin:-30px auto 40px; width:fit-content; max-width:100%; box-sizing:border-box; border-radius:999px; padding:12px 30px}
+html.rd .resume{background:var(--glass-2); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border:0; box-shadow:inset 0 0 0 1px var(--glass-line)}
+
+/* ---------- Hyllan ---------- */
+html.rd .subj-h h2,html.rd .subj-h p,html.rd .bk-tt,html.rd .bk-age,html.rd .bk-prog small,html.rd .faq-h h2,html.rd .faq-h p{text-shadow:var(--halo)}
+html.rd .subj-h .av{background:var(--glass); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); box-shadow:inset 0 0 0 1px var(--glass-line)}
+html.rd .subj-h p{color:color-mix(in srgb,var(--fg) 78%,var(--fg-soft))}
+html.rd .bk-lv{display:none}
+html.rd .bk-ledge{background:none; box-shadow:0 6px 10px -6px rgba(20,40,30,.5); height:4px; margin-top:-10px}
+html.rd .bk-meta{gap:5px}
+html.rd .bk-age{display:flex; flex-wrap:wrap; align-items:center; gap:2px 6px; font-size:.78rem; color:color-mix(in srgb,var(--fg) 72%,var(--fg-soft))}
+html.rd .bk-age .paws svg{width:13px; height:13px}
+html.rd .bk-age .fit{font-style:normal; font-weight:700; color:var(--accent); background:none; padding:0; font-size:.78rem}
+html.rd .bk-age .fit{flex-basis:100%}
+html.rd .bk-prog{display:flex; align-items:center; gap:8px}
+html.rd .bk-prog .bk-bar{flex:1; height:4px; background:color-mix(in srgb,var(--fg) 14%,transparent)}
+html.rd .bk-prog small{font-size:.74rem; color:color-mix(in srgb,var(--fg) 72%,var(--fg-soft)); font-variant-numeric:tabular-nums}
+/* Omslagens bokstäver: lugn text i omslagets typografi, ingen påklistrad bricka */
+html.rd .cover .cv-tag{background:none; box-shadow:none; padding:0; border-radius:0; color:inherit; opacity:.82; font:italic 500 6.2cqw/1 var(--f-disp); font-variation-settings:"SOFT" 100; letter-spacing:.06em}
+html.rd .bk-cv .cover .cv-tag,html.rd .rs-cv .cover .cv-tag{font-size:8.5cqw; padding:0}
+html.rd .cover.dk .cv-tag{color:#FBF6EC; text-shadow:0 .2cqw 1.6cqw rgba(10,18,24,.55)}
+@supports (animation-timeline:view()){
+ @media (prefers-reduced-motion:no-preference){
+  html.rd .subj{animation:none}
+  html.rd .bk{animation:rdReveal linear both; animation-timeline:view(); animation-range:entry 0% entry 55%}
+ }
+}
+@keyframes rdReveal{from{opacity:0; transform:translate3d(0,28px,0) scale(.97)}to{opacity:1; transform:none}}
+
+/* ---------- Bokbinderiet på hyllan ---------- */
+html.rd .bbi{background:var(--glass); backdrop-filter:blur(16px) saturate(1.1); -webkit-backdrop-filter:blur(16px) saturate(1.1); border:0; box-shadow:inset 0 0 0 1px var(--glass-line)}
+html.rd .bbi-pts{display:none}
+html.rd .bbi p{color:var(--fg); margin-bottom:22px}
+html.rd .bbi-go{box-shadow:none}
+/* FAQ */
+html.rd .faq details{background:var(--glass); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:0; box-shadow:inset 0 0 0 1px var(--glass-line)}
+html.rd .faq details[open]{background:var(--glass-2)}
+html.rd .faq summary i{background:none}
+
+/* ---------- Mobil: stor scen överst, luft runt barnväljaren ---------- */
+@media (max-width:700px){
+ html.rd .hero{display:flex; flex-direction:column; min-height:0; background:transparent}
+ html.rd .hero::before{display:none}
+ html.rd .hero-in{display:contents}
+ html.rd .hero-in>div:first-child{order:1; position:relative; z-index:2; padding:30px max(16px,env(safe-area-inset-left,0px)) 0; max-width:26ch}
+ html.rd .hero h1,html.rd .hero p.hero-sub,html.rd .hero-kick{text-shadow:var(--halo)}
+ html.rd .hero-img{order:2; position:relative; inset:auto; height:min(104vw,62svh); margin-top:-18px;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 18%,#000 76%,transparent 100%); mask-image:linear-gradient(180deg,transparent 0,#000 18%,#000 76%,transparent 100%)}
+ html.rd .hero-img img{object-position:63% 62%}
+ html.rd .who{order:3; position:relative; z-index:2; align-self:center; margin-top:-58px}
+ html.rd .hero-bb{display:none}
+ html.rd .hero + .wrap .progress{margin-top:18px}
+ html.rd .progress{border-radius:22px; padding:12px 22px; gap:6px 22px}
+ html.rd .bbi{padding:24px 20px 26px}
+}
+
+/* ---------- Bokbinderiet (panelen) ---------- */
+html.rd .rd-bbscene{display:block; position:fixed; inset:0; z-index:0; pointer-events:none; background:var(--rd-gran) center 60%/cover no-repeat}
+html.rd .rd-bbscene::after{content:""; position:absolute; inset:0; background:radial-gradient(80% 70% at 50% 45%,color-mix(in srgb,var(--bg) 70%,transparent),color-mix(in srgb,var(--bg) 42%,transparent))}
+@media (max-width:900px){html.rd .rd-bbscene::after{background:color-mix(in srgb,var(--bg) 58%,transparent)}}
+html.rd .binderi>.bb-bar,html.rd .binderi>.bb-main{position:relative; z-index:1}
+html.rd .bb-bar{background:var(--glass); border-bottom:0; box-shadow:inset 0 -1px 0 var(--glass-line)}
+html.rd .bb-bar .back{background:var(--glass-2); box-shadow:inset 0 0 0 1px var(--glass-line)}
+html.rd .bb-stagewrap{background:var(--glass); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:0; box-shadow:inset 0 0 0 1px var(--glass-line)}
+html.rd .bb-step,html.rd .bb-guide{background:var(--glass-2); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:0; box-shadow:inset 0 0 0 1px var(--glass-line)}
+html.rd .bb-chip{border-color:transparent}
+html.rd .bb-chip:not([aria-pressed="true"]){background:color-mix(in srgb,var(--card) 50%,transparent)}
+html.rd .bb-bind{background:color-mix(in srgb,var(--card) 55%,transparent); border-color:transparent}
+html.rd .bb-bind-t em{text-transform:none; letter-spacing:0; font-size:.8rem; font-weight:600; color:var(--fg-soft)}
+html.rd .bb-name{background:color-mix(in srgb,var(--card) 70%,transparent); border-color:transparent}
+html.rd .bb-peek>span{background:none; box-shadow:none; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.7); font-weight:700}
+
+/* Förhandsvisningens växlare (tas bort vid införandet) */
+.rd-toggle{display:block; position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top,0px)); z-index:60; border:0; border-radius:999px; padding:9px 14px; font:700 .8rem var(--f-read); color:#fff; background:rgba(28,40,34,.78); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px)}
+.reader:not([hidden])~.rd-toggle{display:none}
+@media print{.rd-scene,.rd-bbscene,.rd-toggle{display:none!important}}
+/* Omslagets nivårad: text på omslaget i stället för vit bricka */
+html.rd .cover .cv-lv{background:none!important; box-shadow:none!important; padding-left:0!important}
+html.rd .cover.ph3d.dk .cv-lv{color:#FBF6EC; text-shadow:0 .2cqw 1.6cqw rgba(10,18,24,.55)}
