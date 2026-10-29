@@ -109,23 +109,52 @@ const arrowSvg=(deg,w=14)=>`<svg class="ic" viewBox="0 0 100 60" style="width:${
 /* paket i olika färger (för vågen) */
 [['pkg_r','#C9574B','#A9463D'],['pkg_b','#5B86B4','#4A6F98'],['pkg_y','#E2B64A','#C49A33']].forEach(([k,c,d])=>{if(typeof ICONIMG!=='undefined'&&ICONIMG[k])return;ART[k]=`<rect x="16" y="38" width="68" height="52" rx="4" fill="${c}"/><rect x="12" y="28" width="76" height="14" rx="3" fill="${d}"/><rect x="45" y="28" width="10" height="62" fill="#F6E6C4"/><path d="M50 28 C42 14 28 14 33 23 C37 29 46 29 50 28 C54 29 63 29 67 23 C72 14 58 14 50 28Z" fill="#F6E6C4"/>`});
 
-/* ================= Bildkryss (korsord med bilder) =================
-   words: [[ORD, ikon, rad, kolumn, 'A'|'D']] där rad/kolumn är ordets FÖRSTA bokstav.
-   Bilden står i rutan före ordet (till vänster för 'A' = åt höger, ovanför för 'D' = nedåt),
-   med en pil in mot ordet. secret: [[rad, kolumn], …] i det hemliga ordets ordning.
+/* ================= Korsord (kryss) =================
+   words: [[ORD, ledtråd, rad, kolumn, 'A'|'D']] – rad/kolumn är ordets FÖRSTA bokstav.
+   mode 'pic': ledtråden är en ikon som står i rutan före ordet, med en pil in mot ordet.
+   mode 'num': ordets första ruta får ett nummer; ledtrådarna står under rutnätet som bildkort (ikon) eller text.
+   given: rutor med bokstaven ifylld från början – 'first' (första bokstaven i varje ord), 'cons' (alla konsonanter)
+          eller en lista [[rad,kolumn],…]. secret: [[rad,kolumn],…] i det hemliga ordets ordning.
    Rutorna är vanliga svarsrutor (box), en bokstav i varje; korsande rutor delas. */
-function kryss(words,{secret=[],cell=10.2,ask='Vem gömmer sig?'}={}){
- const L={},PIC=[];let H=0,W=0;
- words.forEach(([w,icon,r,c,d])=>{const dr=d==='D'?1:0,dc=d==='D'?0:1;[...w].forEach((ch,i)=>{const k=(r+dr*i)+','+(c+dc*i);if(L[k]&&L[k]!==ch)throw new Error('kryss: krock i '+k);L[k]=ch;H=Math.max(H,r+dr*i+1);W=Math.max(W,c+dc*i+1)});PIC.push([icon,r-dr,c-dc,d,w])});
+const KVOW='AEIOUYÅÄÖ';
+function kryss(words,{mode='pic',secret=[],given=null,cell=10.2,ask='Vem gömmer sig?',secretHint='Läs de gula rutorna i ordning.',clueW=null,list=false}={}){
+ const L={},PIC=[],starts={};let H=0,W=0;
+ words.forEach(([w,clue,r,c,d])=>{const dr=d==='D'?1:0,dc=d==='D'?0:1;[...w].forEach((ch,i)=>{const k=(r+dr*i)+','+(c+dc*i);if(L[k]&&L[k]!==ch)throw new Error('kryss: krock i '+k+' '+w);L[k]=ch;H=Math.max(H,r+dr*i+1);W=Math.max(W,c+dc*i+1)});
+  if(mode==='pic'){PIC.push([clue,r-dr,c-dc,d,w]);if(r-dr<0||c-dc<0)throw new Error('kryss: bildrutan utanför för '+w)}starts[r+','+c]=1});
+ const num={};if(mode==='num')Object.keys(starts).map(k=>k.split(',').map(Number)).sort((a,b)=>a[0]-b[0]||a[1]-b[1]).forEach(([r,c],i)=>num[r+','+c]=i+1);
  const sec={};secret.forEach(([r,c],i)=>sec[r+','+c]=i+1);
+ const fix=new Set();
+ if(given==='first')words.forEach(([,,r,c])=>fix.add(r+','+c));
+ else if(given==='cons')Object.entries(L).forEach(([k,ch])=>{if(!KVOW.includes(ch))fix.add(k)});
+ else if(Array.isArray(given))given.forEach(([r,c])=>fix.add(r+','+c));
+ Object.keys(sec).forEach(k=>{if(fix.has(k))throw new Error('kryss: hemlig ruta är ifylld '+k)});
  const arrow=d=>`<svg class="karr ${d==='D'?'down':'right'}" viewBox="0 0 20 20" aria-hidden="true"><path d="${d==='D'?'M4 7l6 7 6-7z':'M7 4l7 6-7 6z'}"/></svg>`;
  let g='';
  /* Bilden får växa utåt (bort från ordet) där grannrutorna är tomma, annars stannar den i sin ruta */
  const used=k=>L[k]||PIC.some(([,pr,pc])=>pr+','+pc===k);
- PIC.forEach(([icon,r,c,d,w])=>{const out=d==='D'?[[r-1,c],[r,c-1],[r,c+1]]:[[r,c-1],[r-1,c],[r+1,c]];const big=out.every(([a,b])=>!used(a+','+b));g+=`<span class="kpic ${d}${big?' big':''}" data-r="${r}" data-c="${c}" data-d="${d}" style="grid-area:${r+1}/${c+1}" aria-label="${w.length} bokstäver ${d==='D'?'nedåt':'åt höger'}">${art(icon,cell)}${arrow(d)}</span>`});
- Object.entries(L).forEach(([k,ch])=>{const [r,c]=k.split(',').map(Number),n=sec[k];g+=`<span class="kcell${n?' sec':''}" data-r="${r}" data-c="${c}" style="grid-area:${r+1}/${c+1}">${box(ch,'txt kc')}${n?`<b>${n}</b>`:''}</span>`});
- const word=secret.map(([r,c])=>L[r+','+c]).join('');
+ PIC.forEach(([icon,r,c,d,w])=>{const out=d==='D'?[[r-1,c],[r,c-1],[r,c+1]]:[[r,c-1],[r-1,c],[r+1,c]];const near=PIC.some(([,pr,pc])=>(pr!==r||pc!==c)&&Math.abs(pr-r)<=1&&Math.abs(pc-c)<=1);const big=!near&&out.every(([a,b])=>!used(a+','+b));
+  g+=`<span class="kpic ${d}${big?' big':''}" data-r="${r}" data-c="${c}" data-d="${d}" style="grid-area:${r+1}/${c+1}" aria-label="${w.length} bokstäver ${d==='D'?'nedåt':'åt höger'}">${art(icon,cell)}${arrow(d)}</span>`});
+ Object.entries(L).forEach(([k,ch])=>{const [r,c]=k.split(',').map(Number),n=sec[k],nb=num[k];
+  g+=`<span class="kcell${n?' sec':''}" data-r="${r}" data-c="${c}" style="grid-area:${r+1}/${c+1}">${fix.has(k)?`<span class="box kc fix">${ch}</span>`:box(ch,'txt kc')}${n?`<b>${n}</b>`:''}${nb?`<i class="kn">${nb}</i>`:''}</span>`});
  const grid=`<div class="kryss" style="--kc:${cell}cqw;grid-template-columns:repeat(${W},var(--kc));grid-template-rows:repeat(${H},var(--kc))">${g}</div>`;
- const hid=secret.length?`<div class="ksecret"><p class="p"><b>${ask}</b>Läs de gula rutorna i ordning.</p><div class="ksw">${[...word].map((ch,i)=>`<span class="kcell sec"><b>${i+1}</b>${box(ch,'txt kc')}</span>`).join('')}</div></div>`:'';
- return {html:`<div class="kwrap">${grid}${hid}</div>`,word,words:words.map(x=>x[0])};
+ let clues='';
+ if(mode==='num'){const byDir=d=>words.filter(x=>x[4]===d).map(x=>[num[x[2]+','+x[3]],x]).sort((a,b)=>a[0]-b[0]);
+  const pic=words.every(x=>typeof ART!=='undefined'&&!!ART[x[1]]);
+  const at=([n,[w,clue,r,c,d]])=>`data-r="${d==='D'?r-1:r}" data-c="${d==='D'?c:c-1}" data-d="${d}"`;
+  const all=words.map(x=>[num[x[2]+','+x[3]],x]).sort((a,b)=>a[0]-b[0]||(a[1][4]==='A'?-1:1));
+  if(pic)clues=`<div class="kcards">${all.map(it=>`<span class="kclue pic" ${at(it)}><span class="kbadge"><i class="kn">${it[0]}</i>${arrow(it[1][4])}</span>${art(it[1][1],clueW||13)}</span>`).join('')}</div>`;
+  else if(list)clues=`<ol class="klist">${all.map(it=>`<li class="kclue" ${at(it)}><i class="kn">${it[0]}</i>${arrow(it[1][4])}<span>${it[1][1]}</span></li>`).join('')}</ol>`;
+  else{const col=(d,t)=>`<div class="kcol"><h4>${arrow(d)}${t}</h4><ul>${byDir(d).map(it=>`<li class="kclue" ${at(it)}><i class="kn">${it[0]}</i><span>${it[1][1]}</span></li>`).join('')}</ul></div>`;
+   clues=`<div class="kclues">${col('A','Åt höger')}${col('D','Nedåt')}</div>`}}
+ const word=secret.map(([r,c])=>L[r+','+c]).join('');
+ const hid=secret.length?`<div class="ksecret"><p class="p"><b>${ask}</b>${secretHint}</p><div class="ksw">${[...word].map((ch,i)=>`<span class="kcell sec"><b>${i+1}</b>${box(ch,'txt kc')}</span>`).join('')}</div></div>`:'';
+ return {html:`<div class="kwrap ${mode}">${grid}${clues}${hid}</div>`,word,words:words.map(x=>x[0]),
+  key:(d=>words.filter(x=>x[4]===d).map(x=>x[0]).join(', '))};
 }
+/* Ordsök: rows = rader med bokstäver, words = [[ORD, ikon, rad, kolumn, 'A'|'D']]. Barnet trycker på (ringar in) orden. */
+function ordsok(rows,words,{cell=9.4}={}){const on=new Set();
+ words.forEach(([w,,r,c,d])=>{[...w].forEach((ch,i)=>{const rr=r+(d==='D'?i:0),cc=c+(d==='D'?0:i);if(rows[rr][cc]!==ch)throw new Error('ordsok: '+w+' passar inte');on.add(rr+','+cc)})});
+ const g=rows.map((row,r)=>[...row].map((ch,c)=>selOk(`<span>${ch}</span>`,'lc ws',on.has(r+','+c))).join('')).join('');
+ return `<div class="wsw"><div class="wsgrid" style="--wc:${cell}cqw;grid-template-columns:repeat(${rows[0].length},var(--wc))">${g}</div><div class="wscards">${words.map(([w,ic])=>`<span class="wscard">${art(ic,9)}<b>${w}</b></span>`).join('')}</div></div>`}
+/* Eget korsord: rutat fält att rita bilder och skriva ord i (pennan i appen, blyerts på papper) */
+function egetKryss(R=8,C=8){return `<div class="kown" style="grid-template-columns:repeat(${C},1fr);grid-template-rows:repeat(${R},1fr)">${rep(R*C,()=>'<i></i>')}</div>`}
