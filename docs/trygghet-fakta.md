@@ -46,3 +46,10 @@ Källor:
 - Brand och olycka 2: Tilde ringer eftersom morfars telefon är kvar inne (logiskt varför barnet ringer).
 - Min kropp: hemligheter berättas för "en vuxen du litar på" (inte bara mamma och pappa, eftersom övergrepp oftast sker i barnets närhet). Rädda Barnens definition: en bra hemlighet gör ingen ledsen eller rädd; en dålig ger en klump i magen.
 - Kroppsreglerna i del 2 är omgjorda till "vilka meningar är riktiga kroppsregler" utan svarsalternativ som "ja, om det är en kompis".
+
+## Ändringar 29 oktober
+
+- Brandföljden är densamma i båda delarna: gå ut, ropa "Det brinner!" (varna de andra), stäng dörren, gå till mötesplatsen, en vuxen ringer 112. Källa för att ropa: Räddningstjänsten Storgöteborg, *Ellie och Jonas lär sig om eld* (brandmännen: skynda ut och ropa att det brinner, spring aldrig in igen). Stäng dörren: SOS Alarm, *Övningsmaterial 112 för barn*.
+- Brand och olycka 2: frågan om varför Tilde ringer är ersatt med varför morfar inte hämtar telefonen (man går aldrig in igen). Svaret i köksfrågan säger nu samma sak som del 1.
+- Situationskort (bild till vänster, fråga och svar till höger) på situationsfrågorna i b1, b2 och k2. Bilden visar situationen, aldrig svaret. Uttern med gul mössa är den vuxne med en dålig hemlighet; grävlingen är redan trygg vuxen i Min kropp 1 och används inte så.
+- Min kropp 2: presenten till mormors kalas är borttagen (samma idé som teckningen till pappa i del 1).

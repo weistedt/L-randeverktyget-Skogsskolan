@@ -9,3 +9,9 @@ vk2 vinka,highfive,hej,- -
 vk3 kittlar,stopp_hand,brottas,lyssnar_grav -
 vk4 vuxen_lyssnar,vuxen_trostar,viskar,doktor -
 vt5 is,-,tilde,butik2 -
+vb1 trapphus_rok,brandvarnare_tjuter,kompis_ramlat,- -   # 2026-10-29 (BR kastrull förkastad: barn på pall vid spisen)
+vk5 -,-,kompis_viskar,- -   # 2026-10-29 (TL/BR förkastade: grävlingen är redan trygg vuxen i vk4; TR present skippad, dubblett mot k1)
+vk6 spel_bild,kompis_pappa,kattungar,grannen_hamtar -
+vk7 fritids_lyssnar_inte,-,-,- -   # 2026-10-29 (TR ringer Bris avslöjar svaret; BL knuff sparad till j1; BR retas otydlig)
+vt6 -,-,tandsticka,- -   # 2026-10-29 (bil_svanger: Ivar står i gatan; boll och backljus fel)
+vk8 hemlis_dalig,hemlis_present,-,- -   # uttern med gul mössa = vuxen med dålig hemlighet
