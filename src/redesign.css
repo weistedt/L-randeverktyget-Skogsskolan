@@ -1,49 +1,49 @@
-/* ===================== Redesign "Skogsstigen" (2026-10-29, v3: svävande dekor) =====================
+/* ===================== Redesign "Skogsstigen" (2026-10-29, v4: årstiderna längs sidan) =====================
    Allt gäller under html.rd så att förhandsvisningen kan växla före/efter.
    Princip: färre vita brickor (glas eller ingenting), hyllans vanliga ljusa bakgrund,
-   och bakom böckerna några få 3D-ikoner som seglar förbi: löv, snöflingor, en fjäril, ett bi. */
+   och ett större 3D-motiv per avsnitt som följer årstiderna nedåt sidan. */
 html.rd{--glass:color-mix(in srgb,var(--card) 42%,transparent); --glass-2:color-mix(in srgb,var(--card) 68%,transparent); --glass-line:color-mix(in srgb,#fff 55%,transparent)}
 @media (prefers-color-scheme: dark){html.rd:not([data-theme="light"]){--glass-line:color-mix(in srgb,#fff 10%,transparent)}}
 html.rd[data-theme="dark"]{--glass-line:color-mix(in srgb,#fff 10%,transparent)}
-.rd-scene,.rd-bbscene,.rd-toggle{display:none}
+.rd-toggle{display:none}
 
-/* ---------- Svävande dekor bakom hyllan ---------- */
-html.rd .rd-scene{display:block}
-@media (prefers-reduced-motion:reduce){
- /* Minskad rörelse: ikonerna ligger stilla, utspridda, och flygarna visas inte */
- .rd-f,.rd-f i,.rd-fly,.rd-fly i,.rd-fly img{animation:none!important}
- html.rd .rd-f{top:var(--ty)}
- html.rd .rd-f i{transform:rotate(calc(18deg * var(--r)))}
- html.rd .rd-fly{display:none}
+/* ---------- Årstiderna längs sidan ----------
+   Ett större 3D-motiv per avsnitt, fast på sidan vid rubriken (rullar med innehållet).
+   Ordningen följer året: sommar, höst, vinter, vår … (se RD_YEAR i scene.js). */
+.rd-season{display:none}
+html.rd .subj{position:relative}
+html.rd .subj>.subj-h,html.rd .subj>.books,html.rd .bbi>.bbi-art,html.rd .bbi>.bbi-txt,html.rd .faq>.faq-h,html.rd .faq>.faq-grid{position:relative; z-index:1}
+html.rd .faq{position:relative}
+html.rd .rd-season{display:block; position:absolute; z-index:0; pointer-events:none; right:2%; top:-34px; width:var(--sz,120px)}
+html.rd .rd-season i{display:block}
+html.rd .rd-season img{display:block; width:100%; height:auto; filter:drop-shadow(0 12px 14px rgba(40,40,20,.16))}
+html.rd .rd-season.leaf{--sz:150px; top:-40px}
+html.rd .rd-season.snow{--sz:118px; top:-30px}
+html.rd .rd-season.snow img{filter:drop-shadow(0 3px 8px rgba(50,70,90,.32))}
+html.rd .rd-season.butterfly{--sz:128px}
+html.rd .rd-season.bee{--sz:112px; top:-26px}
+html.rd .rd-season.ladybug{--sz:84px; top:-18px}
+html.rd .rd-season.flower{--sz:104px; top:-30px}
+html.rd .bbi>.rd-season{top:-10px; right:-6px}
+html.rd .faq>.rd-season{top:-46px; right:0}
+@media (prefers-reduced-motion:no-preference){
+ html.rd .rd-season.sway i{transform-origin:50% 92%; animation:rdSway 7s ease-in-out infinite alternate}
+ html.rd .rd-season.spin i{animation:rdSpin 120s linear infinite}
+ html.rd .rd-season.hover i{animation:rdHover 4.2s ease-in-out infinite alternate}
+ html.rd .rd-season.flap i{animation:rdHover 5s ease-in-out infinite alternate}
+ html.rd .rd-season.flap img{animation:rdFlap 5s ease-in-out infinite}
 }
-.rd-scene{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; contain:strict}
-.rd-scene img{display:block; width:100%; height:auto}
-.rd-f{position:absolute; top:-9vh; left:var(--x); width:var(--w); animation:rdFall var(--d) linear var(--dl) infinite}
-.rd-f i{display:block; animation:rdSway calc(var(--d) / 5) ease-in-out var(--dl) infinite alternate}
-.rd-f.lf img{opacity:.8; filter:drop-shadow(0 6px 5px rgba(40,30,10,.14))}
-.rd-f.sn img{opacity:.95; filter:drop-shadow(0 1px 3px rgba(50,70,90,.32))}
-.rd-fly{position:absolute; left:0; top:var(--y); animation:rdCross var(--d) linear var(--dl) infinite}
-.rd-fly i{display:block; animation:rdBob 2.8s ease-in-out infinite alternate}
-.rd-fly.bf{width:44px}
-.rd-fly.bf img{animation:rdFlap .32s ease-in-out infinite alternate; transform-origin:50% 50%}
-.rd-fly.be{width:34px}
-.rd-fly.be i{animation-duration:1.3s}
-.rd-fly.be img{animation:rdBuzz .12s linear infinite alternate}
-@media (max-width:700px){.rd-f:nth-child(n+6){display:none}.rd-fly.bf{width:34px}.rd-fly.be{width:28px}}
-/* På mobil täcker böckerna nästan hela bredden, så bakom dem syns nästan ingenting.
-   Där seglar ikonerna i stället ovanpå (klick går igenom), färre och lite genomskinliga. */
-@media (max-width:700px) and (prefers-reduced-motion:no-preference){html.rd .rd-scene{z-index:3}.rd-f.lf img{opacity:.7}.rd-f.sn img{opacity:.85}}
-html.rd-paused .rd-scene *{animation-play-state:paused!important}
-@keyframes rdFall{0%{transform:translate3d(0,0,0); opacity:0}6%{opacity:1}92%{opacity:1}100%{transform:translate3d(0,118vh,0); opacity:0}}
-@keyframes rdSway{from{transform:translate3d(calc(var(--sw) * -1),0,0) rotate(calc(-26deg * var(--r)))}to{transform:translate3d(var(--sw),0,0) rotate(calc(32deg * var(--r)))}}
-@keyframes rdCross{0%{transform:translate3d(-14vw,0,0)}40%{transform:translate3d(110vw,-8vh,0)}40.01%,100%{transform:translate3d(-14vw,0,0)}}
-@keyframes rdBob{from{transform:translate3d(0,-14px,0) rotate(-6deg)}to{transform:translate3d(0,14px,0) rotate(6deg)}}
-@keyframes rdFlap{from{transform:scaleX(1)}to{transform:scaleX(.3)}}
-@keyframes rdBuzz{from{transform:translate3d(0,-1px,0)}to{transform:translate3d(0,1px,0)}}
+@keyframes rdSway{from{transform:rotate(-6deg)}to{transform:rotate(7deg)}}
+@keyframes rdSpin{to{transform:rotate(360deg)}}
+@keyframes rdHover{from{transform:translate3d(0,-5px,0) rotate(-3deg)}to{transform:translate3d(0,6px,0) rotate(3deg)}}
+@keyframes rdFlap{0%,70%,100%{transform:scaleX(1)}76%,88%{transform:scaleX(.62)}82%,94%{transform:scaleX(1)}}
+@media (max-width:700px){
+ html.rd .subj-h{padding-right:58px}
+ html.rd .rd-season{right:-6px; top:-22px; width:calc(var(--sz,120px) * .58)}
+ html.rd .rd-season.leaf{top:-28px}
+ html.rd .faq-h{padding-right:58px}
+}
 
-/* Innehållet ligger ovanför dekoren */
-html.rd .shelf{position:relative}
-html.rd .shelf>.hero,html.rd .shelf>.wrap{position:relative; z-index:1}
 
 /* ---------- Hero ---------- */
 html.rd .hero{background:transparent}
@@ -133,7 +133,7 @@ html.rd .bb-peek>span{background:none; box-shadow:none; color:#fff; text-shadow:
 /* Förhandsvisningens växlare (tas bort vid införandet) */
 .rd-toggle{display:block; position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top,0px)); z-index:60; border:0; border-radius:999px; padding:9px 14px; font:700 .8rem var(--f-read); color:#fff; background:rgba(28,40,34,.78); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px)}
 .reader:not([hidden])~.rd-toggle{display:none}
-@media print{.rd-scene,.rd-bbscene,.rd-toggle{display:none!important}}
+@media print{.rd-season,.rd-toggle{display:none!important}}
 /* Omslagets nivårad: text på omslaget i stället för vit bricka */
 html.rd .cover .cv-lv{background:none!important; box-shadow:none!important; padding-left:0!important}
 html.rd .cover.ph3d.dk .cv-lv{color:#FBF6EC; text-shadow:0 .2cqw 1.6cqw rgba(10,18,24,.55)}
