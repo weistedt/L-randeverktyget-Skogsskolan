@@ -118,7 +118,7 @@ async function bbMake(){const p=bbPlan();if(!p||BB.busy)return;BB.busy=true;cons
 
 function bbOpen(bid){BB.bid=bid||(R.b&&R.b.id)||(state.last[state.kid]&&state.last[state.kid].b)||BOOKS[0].id;BB.subj=null;BB.files=null;BB.open=true;
  try{const kid=KIDS.find(k=>k.id===state.kid);if(!BB.name&&kid&&!BB.nameTouched)BB.name=kid.name}catch(e){}
- $('bbName').value=BB.name;$('binderi').hidden=false;document.documentElement.classList.add('bb-open');bbRender();bbManifest();$('binderi').scrollTop=0;setTimeout(()=>$('bbClose').focus(),50)}
+ $('bbName').value=BB.name;bbKids();$('binderi').hidden=false;document.documentElement.classList.add('bb-open');bbRender();bbManifest();$('binderi').scrollTop=0;setTimeout(()=>$('bbClose').focus(),50)}
 function bbClose(){if(!BB.open)return;BB.open=false;$('binderi').hidden=true;document.documentElement.classList.remove('bb-open')}
 
 /* händelser */
@@ -132,7 +132,11 @@ $('binderi').addEventListener('click',e=>{const t=e.target;let x;
  if(t.closest('#bbCopy')){const txt=$('bbOrder').textContent;const done=()=>toast('Texten är kopierad.');try{navigator.clipboard.writeText(txt).then(done,()=>{bbSelect();toast('Markerad – kopiera med Ctrl+C.')})}catch(err){bbSelect()}return}
  if(t.closest('#bbClose'))bbClose()});
 function bbSelect(){const r=document.createRange();r.selectNodeContents($('bbOrder'));const s=getSelection();s.removeAllRanges();s.addRange(r)}
-$('bbName').addEventListener('input',e=>{BB.name=e.target.value.slice(0,24);BB.nameTouched=true;BB.files=null;bbPeekName();bbShowFiles()});
+$('bbName').addEventListener('input',e=>{BB.name=e.target.value.slice(0,24);BB.nameTouched=true;BB.files=null;bbPeekName();bbShowFiles();bbKidsMark()});
+/* Barnen i familjen som snabbval ovanför namnrutan */
+function bbKids(){const el=$('bbKids'),ks=(typeof famReal==='function'?famReal():[]).filter(k=>k.name);el.hidden=!ks.length;el.innerHTML=ks.map(k=>`<button type="button" class="bb-chip" data-kname="${bbEsc(k.name)}">${bbEsc(k.name)}</button>`).join('');bbKidsMark()}
+function bbKidsMark(){const v=BB.name.trim();$('bbKids').querySelectorAll('[data-kname]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.kname===v?'true':'false'))}
+$('bbKids').addEventListener('click',e=>{const b=e.target.closest('[data-kname]');if(!b)return;const n=$('bbName');n.value=b.dataset.kname;n.dispatchEvent(new Event('input'))});
 $('bbDuplex').addEventListener('change',e=>{BB.duplex=e.target.checked;BB.files=null;bbRender()});
 $('bbMake').addEventListener('click',bbMake);
 document.addEventListener('keydown',e=>{if(BB.open&&e.key==='Escape'){e.stopImmediatePropagation();bbClose()}},true);
