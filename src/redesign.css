@@ -16,13 +16,29 @@ html.rd .shelf>.hero,html.rd .shelf>.wrap{position:relative; z-index:1}
 .rd-sky.near{z-index:2}
 html:not(.rd) .rd-sky{display:none}
 .rd-k{position:absolute; display:block}
+.rd-k i{display:block; will-change:transform}
 .rd-k img{display:block; width:100%; height:auto}
-.rd-k.d0 img{opacity:.55; filter:blur(1.2px)}
-.rd-k.d1 img{opacity:.92; filter:drop-shadow(0 8px 8px rgba(40,35,15,.14))}
-.rd-k.d2 img{opacity:.8; filter:blur(3.5px)}
-.rd-k.sn.d1 img{filter:drop-shadow(0 2px 5px rgba(50,70,90,.32))}
-.rd-k.sn.d0 img{opacity:.7; filter:blur(1px) drop-shadow(0 1px 3px rgba(50,70,90,.3))}
-.rd-k.bug img{filter:drop-shadow(0 10px 10px rgba(40,35,15,.16))}
+/* Dämpade så att de inte tar över: långt bort nästan ett minne, närmast suddigt. */
+.rd-k.d0 img{opacity:.28; filter:blur(1.4px)}
+.rd-k.d1 img{opacity:.5; filter:drop-shadow(0 6px 6px rgba(40,35,15,.1))}
+.rd-k.d2 img{opacity:.38; filter:blur(4px)}
+.rd-k.bug img{opacity:.62}
+/* Snöflingor: frostig gloria */
+.rd-k.sn img{filter:drop-shadow(0 0 5px rgba(255,255,255,.85)) drop-shadow(0 0 12px rgba(214,232,244,.7)) drop-shadow(0 1px 2px rgba(60,80,100,.25))}
+.rd-k.sn.d0 img{opacity:.35; filter:blur(1.2px) drop-shadow(0 0 6px rgba(255,255,255,.8))}
+.rd-k.sn.d1 img{opacity:.55}
+@media (prefers-color-scheme: dark){html:not([data-theme="light"]) .rd-k img{opacity:.32}html:not([data-theme="light"]) .rd-k.d0 img{opacity:.18}html:not([data-theme="light"]) .rd-k.sn img{opacity:.4}}
+html[data-theme="dark"] .rd-k img{opacity:.32}html[data-theme="dark"] .rd-k.d0 img{opacity:.18}html[data-theme="dark"] .rd-k.sn img{opacity:.4}
+@media (prefers-reduced-motion:no-preference){
+ /* Löv dalar: vickar och sjunker lite, som i ett långsamt fall */
+ .rd-k:not(.sn):not(.bug) i{animation:rdDala var(--dd) ease-in-out var(--dl) infinite alternate}
+ /* Snö: skimrar (frost som andas) och vrider sig nästan omärkligt */
+ .rd-k.sn i{animation:rdFrost calc(var(--dd) * .8) ease-in-out var(--dl) infinite alternate}
+ .rd-k.bug i{animation:rdSvav calc(var(--dd) * .6) ease-in-out var(--dl) infinite alternate}
+}
+@keyframes rdDala{0%{transform:translate3d(-6px,-8px,0) rotate(-9deg)}50%{transform:translate3d(4px,2px,0) rotate(5deg)}100%{transform:translate3d(-2px,10px,0) rotate(-4deg)}}
+@keyframes rdFrost{from{transform:scale(.94) rotate(-8deg); opacity:.75}to{transform:scale(1.04) rotate(8deg); opacity:1}}
+@keyframes rdSvav{from{transform:translate3d(0,-4px,0) rotate(-3deg)}to{transform:translate3d(0,5px,0) rotate(3deg)}}
 @media print{.rd-sky{display:none!important}}
 
 /* ---------- Hero ---------- */

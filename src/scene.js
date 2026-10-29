@@ -3,9 +3,9 @@
    ett fruset ögonblick. Motiven ligger utspridda på olika djup (små och mjuka
    långt bort, några stora och suddiga närmast), sitter fast på sidan och rullar
    med innehållet. Årstiderna följer varandra nedåt: höst, vinter, vår, sommar …
-   Inget rör sig. Placeringen är slumpad men densamma varje gång (fast frö).
+   Lövet dalar och vickar lite på stället, snöflingorna skimrar av frost. Placeringen är slumpad men densamma varje gång (fast frö).
    Ängsbakgrunden från v2 ligger i assets/bank/. */
-const RD_PREVIEW=true; // förhandsvisning: knappen "Visa före/efter"
+const RD_PREVIEW=false; // true visar knappen "Visa gamla/nya designen" (bara för förhandsvisning)
 // Årstid per avsnitt uppifrån och ned (heron är sommar, så första avsnittet är höst).
 const RD_SEASONS=['host','vinter','var','sommar','host','vinter','var','sommar'];
 const RD_KIT={host:['leaf_maple','leaf_autumn','leaf_oak','leaf_autumn','leaf_maple'],vinter:['snow'],var:['leaf','leaf_birch','leaf'],sommar:['butterfly','ladybug','bee']};
@@ -39,7 +39,7 @@ function rdSky(){const shelf=$('shelf');if(!shelf)return;shelf.querySelectorAll(
     ok=true}
    if(!ok)continue;placed.push({l:x,t:y,r:x+sz,b:y+sz});
    const rot=Math.round(r()*140-70),flip=k!=='snow'&&!bug&&r()<.5?-1:1;
-   const html=`<span class="rd-k d${d}${k==='snow'?' sn':''}${bug?' bug':''}" style="left:${Math.round(x)}px;top:${Math.round(y)}px;width:${Math.round(sz)}px;transform:rotate(${bug?Math.round(r()*30-15):rot}deg) scaleX(${flip})"><img alt="" src="${I[k]}" decoding="async"></span>`;
+   const html=`<span class="rd-k d${d}${k==='snow'?' sn':''}${bug?' bug':''}" style="left:${Math.round(x)}px;top:${Math.round(y)}px;width:${Math.round(sz)}px;transform:rotate(${bug?Math.round(r()*30-15):rot}deg) scaleX(${flip});--dd:${(6+r()*5).toFixed(1)}s;--dl:${(-r()*10).toFixed(1)}s"><i><img alt="" src="${I[k]}" decoding="async"></i></span>`;
    if(d===2)near+=html;else far+=html}});
  shelf.insertAdjacentHTML('beforeend',`<div class="rd-sky" aria-hidden="true">${far}</div><div class="rd-sky near" aria-hidden="true">${near}</div>`)}
 let rdT=0;function rdLater(){clearTimeout(rdT);rdT=setTimeout(rdSky,120)}
