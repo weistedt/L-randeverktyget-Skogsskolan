@@ -1,4 +1,4 @@
-/* ===================== Redesign "Skogsstigen" (2026-10-29) =====================
+/* ===================== Redesign "Skogsstigen" (2026-10-29, v2: en bakgrund) =====================
    Allt gäller under html.rd så att förhandsvisningen kan växla före/efter.
    Princip: naturen är bakgrunden, inte vita kort. Glas (genomskinligt + oskärpa)
    i stället för vita brickor, text direkt på scenen med en mjuk ljus gloria. */
@@ -8,39 +8,31 @@ html.rd[data-theme="dark"]{--glass-line:color-mix(in srgb,#fff 10%,transparent)}
 .rd-scene,.rd-bbscene,.rd-toggle{display:none}
 html.rd .rd-scene{display:block}
 
-/* ---------- Scenen (fast bakgrund) ---------- */
+/* ---------- Scenen (en fast bakgrund rakt igenom) ---------- */
 .rd-scene{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; contain:strict; background:var(--bg)}
-.rd-l{position:absolute; inset:-3%; background-size:cover; background-position:center 58%; opacity:0; transition:opacity 1.8s ease; will-change:opacity}
-.rd-l.on{opacity:1}
-/* Slöjan: tät där böckerna står, glesare mot kanterna så att naturen syns. */
-.rd-veil{position:absolute; inset:0; background:
-  radial-gradient(70% 62% at 50% 52%,color-mix(in srgb,var(--bg) 74%,transparent) 0%,color-mix(in srgb,var(--bg) 52%,transparent) 70%,color-mix(in srgb,var(--bg) 30%,transparent) 100%)}
-@media (max-width:700px){.rd-veil{background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 40%,transparent) 0%,color-mix(in srgb,var(--bg) 64%,transparent) 28%,color-mix(in srgb,var(--bg) 70%,transparent) 100%)}}
-.rd-rays{position:absolute; inset:-20% -30%; opacity:.0; background:repeating-linear-gradient(112deg,transparent 0 9%,rgba(255,246,214,.22) 11%,transparent 15% 24%); transform-origin:30% 0}
-.rd-scene[data-s="host"] .rd-rays,.rd-scene[data-s="gran"] .rd-rays,.rd-scene[data-s="var"] .rd-rays{opacity:.6}
+.rd-l{position:absolute; inset:-3%; background:var(--rd-ang) center 62%/cover no-repeat}
+@media (max-aspect-ratio:4/5){.rd-l{background-image:var(--rd-angs); background-position:center 70%}}
+.rd-rays{position:absolute; inset:-20% -30%; opacity:.45; background:repeating-linear-gradient(112deg,transparent 0 9%,rgba(255,246,214,.18) 11%,transparent 15% 24%)}
 .rd-parts{position:absolute; inset:0}
-.rd-p{position:absolute; left:var(--x); display:none}
-.rd-scene[data-p="leaf"] .rd-p.leaf,.rd-scene[data-p="petal"] .rd-p.petal,.rd-scene[data-p="mote"] .rd-p.mote,.rd-scene[data-p="fly"] .rd-p.fly{display:block}
-.rd-p.leaf,.rd-p.petal{top:-10%; width:calc(46px * var(--s))}
-.rd-p.leaf img,.rd-p.petal img{width:100%; display:block; filter:drop-shadow(0 6px 6px rgba(40,30,10,.18))}
-.rd-p.mote{top:var(--y); width:calc(7px * var(--s)); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,rgba(255,250,225,.95) 0,rgba(255,240,190,.55) 40%,transparent 70%)}
-.rd-p.fly{top:var(--y); width:calc(9px * var(--s)); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,#FFF6C8 0,rgba(255,214,110,.75) 35%,transparent 70%)}
+.rd-p{position:absolute; left:var(--x); top:var(--y); width:calc(7px * var(--s)); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle,rgba(255,250,225,.95) 0,rgba(255,240,190,.55) 40%,transparent 70%)}
 @media (prefers-reduced-motion:no-preference){
- .rd-l.on{animation:rdBreath 38s ease-in-out infinite alternate}
- .rd-rays{animation:rdRays 14s ease-in-out infinite alternate}
- .rd-p.leaf,.rd-p.petal{animation:rdFall var(--d) linear var(--w) infinite}
- .rd-p.leaf img,.rd-p.petal img{animation:rdSway calc(var(--d) / 4) ease-in-out var(--w) infinite alternate}
- .rd-p.mote{animation:rdRise var(--d) ease-in-out var(--w) infinite}
- .rd-p.fly{animation:rdFly var(--d) ease-in-out var(--w) infinite alternate}
+ .rd-l{animation:rdBreath 70s ease-in-out infinite alternate}
+ .rd-rays{animation:rdRays 18s ease-in-out infinite alternate}
+ .rd-p{opacity:0; animation:rdRise var(--d) ease-in-out var(--w) infinite}
 }
 @media (prefers-reduced-motion:reduce){.rd-parts,.rd-rays{display:none}}
 html.rd-paused .rd-scene *{animation-play-state:paused!important}
-@keyframes rdBreath{from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.07) translate3d(-1.2%,-1%,0)}}
-@keyframes rdRays{from{transform:translate3d(-3%,0,0) rotate(0deg)}to{transform:translate3d(3%,0,0) rotate(2deg)}}
-@keyframes rdFall{0%{transform:translate3d(0,0,0); opacity:0}8%{opacity:.95}88%{opacity:.95}100%{transform:translate3d(0,118vh,0); opacity:0}}
-@keyframes rdSway{from{transform:translate3d(calc(var(--sw) * -1),0,0) rotate(-28deg)}to{transform:translate3d(var(--sw),0,0) rotate(34deg)}}
-@keyframes rdRise{0%{transform:translate3d(0,0,0) scale(.6); opacity:0}30%{opacity:.9}70%{opacity:.7}100%{transform:translate3d(14px,-26vh,0) scale(1.1); opacity:0}}
-@keyframes rdFly{0%{transform:translate3d(0,0,0); opacity:.1}35%{opacity:1}55%{opacity:.25}100%{transform:translate3d(28px,-34px,0); opacity:.9}}
+@keyframes rdBreath{from{transform:scale(1)}to{transform:scale(1.04)}}
+@keyframes rdRays{from{transform:translate3d(-2%,0,0)}to{transform:translate3d(2%,0,0)}}
+@keyframes rdRise{0%{transform:translate3d(0,0,0) scale(.6); opacity:0}30%{opacity:.85}70%{opacity:.6}100%{transform:translate3d(14px,-24vh,0) scale(1.1); opacity:0}}
+
+/* Slöjan följer innehållet: klar bild bakom heron, tonar in under den (ingen skarv),
+   och är glesare mot sidorna på bred skärm så att ängen syns. */
+html.rd .shelf{overflow-x:clip}
+html.rd .shelf>.wrap::before{content:""; position:absolute; z-index:-1; top:-200px; bottom:0; left:calc(50% - 50vw); width:100vw; pointer-events:none;
+ background:linear-gradient(180deg,transparent 0,color-mix(in srgb,var(--bg) 66%,transparent) 300px,color-mix(in srgb,var(--bg) 70%,transparent) 100%);
+ -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.45) 0,#000 24%,#000 76%,rgba(0,0,0,.45) 100%); mask-image:linear-gradient(90deg,rgba(0,0,0,.45) 0,#000 24%,#000 76%,rgba(0,0,0,.45) 100%)}
+@media (max-width:700px){html.rd .shelf>.wrap::before{top:-120px; -webkit-mask-image:none; mask-image:none; background:linear-gradient(180deg,transparent 0,color-mix(in srgb,var(--bg) 66%,transparent) 200px,color-mix(in srgb,var(--bg) 70%,transparent) 100%)}}
 
 /* Innehållet ovanpå scenen */
 html.rd body{background:var(--bg)}
@@ -62,12 +54,7 @@ html.rd .hero-bb-t b{font-size:1rem; text-decoration:underline; text-decoration-
 html.rd .hero-bb-art{width:52px; height:38px}
 html.rd .hero-bb-art span{width:52px!important; height:38px!important}
 html.rd .hero-bb-art svg.ic{width:52px!important}
-@supports (animation-timeline:scroll()){
- @media (prefers-reduced-motion:no-preference){
-  html.rd .hero-img img{animation:rdHeroPar linear both; animation-timeline:scroll(root); animation-range:0 90vh}
- }
-}
-@keyframes rdHeroPar{to{transform:translate3d(0,14%,0) scale(1.04)}}
+
 
 /* Framsteg: glasremsa utan kant, ingen tass-förklaring (den står på varje bok) */
 html.rd .progress{background:var(--glass); backdrop-filter:blur(14px) saturate(1.15); -webkit-backdrop-filter:blur(14px) saturate(1.15); border:0; box-shadow:inset 0 0 0 1px var(--glass-line); justify-content:center; gap:10px 34px; margin:-30px auto 40px; width:fit-content; max-width:100%; box-sizing:border-box; border-radius:999px; padding:12px 30px}
@@ -127,7 +114,8 @@ html.rd .faq summary i{background:none}
 }
 
 /* ---------- Bokbinderiet (panelen) ---------- */
-html.rd .rd-bbscene{display:block; position:fixed; inset:0; z-index:0; pointer-events:none; background:var(--rd-gran) center 60%/cover no-repeat}
+html.rd .rd-bbscene{display:block; position:fixed; inset:0; z-index:0; pointer-events:none; background:var(--rd-ang) center 62%/cover no-repeat}
+@media (max-aspect-ratio:4/5){html.rd .rd-bbscene{background-image:var(--rd-angs); background-position:center 70%}}
 html.rd .rd-bbscene::after{content:""; position:absolute; inset:0; background:radial-gradient(80% 70% at 50% 45%,color-mix(in srgb,var(--bg) 70%,transparent),color-mix(in srgb,var(--bg) 42%,transparent))}
 @media (max-width:900px){html.rd .rd-bbscene::after{background:color-mix(in srgb,var(--bg) 58%,transparent)}}
 html.rd .binderi>.bb-bar,html.rd .binderi>.bb-main{position:relative; z-index:1}
