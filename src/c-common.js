@@ -139,15 +139,17 @@ function kryss(words,{mode='pic',secret=[],given=null,cell=10.2,ask='Vem gömmer
  const grid=`<div class="kryss" style="--kc:${cell}cqw;grid-template-columns:repeat(${W},var(--kc));grid-template-rows:repeat(${H},var(--kc))">${g}</div>`;
  let clues='';
  if(mode==='num'){const byDir=d=>words.filter(x=>x[4]===d).map(x=>[num[x[2]+','+x[3]],x]).sort((a,b)=>a[0]-b[0]);
-  const pic=words.every(x=>typeof ART!=='undefined'&&!!ART[x[1]]);
+  /* bildkort: ikonnamn eller färdig HTML (t.ex. en tärning) */
+  const isH=x=>typeof x==='string'&&x.startsWith('<');
+  const pic=words.every(x=>isH(x[1])||(typeof ART!=='undefined'&&!!ART[x[1]]));
   const at=([n,[w,clue,r,c,d]])=>`data-r="${d==='D'?r-1:r}" data-c="${d==='D'?c:c-1}" data-d="${d}"`;
   const all=words.map(x=>[num[x[2]+','+x[3]],x]).sort((a,b)=>a[0]-b[0]||(a[1][4]==='A'?-1:1));
-  if(pic)clues=`<div class="kcards">${all.map(it=>`<span class="kclue pic" ${at(it)}><span class="kbadge"><i class="kn">${it[0]}</i>${arrow(it[1][4])}</span>${art(it[1][1],clueW||13)}</span>`).join('')}</div>`;
+  if(pic)clues=`<div class="kcards">${all.map(it=>`<span class="kclue pic" ${at(it)}><span class="kbadge"><i class="kn">${it[0]}</i>${arrow(it[1][4])}</span>${isH(it[1][1])?it[1][1]:art(it[1][1],clueW||13)}</span>`).join('')}</div>`;
   else if(list)clues=`<ol class="klist">${all.map(it=>`<li class="kclue" ${at(it)}><i class="kn">${it[0]}</i>${arrow(it[1][4])}<span>${it[1][1]}</span></li>`).join('')}</ol>`;
   else{const col=(d,t)=>`<div class="kcol"><h4>${arrow(d)}${t}</h4><ul>${byDir(d).map(it=>`<li class="kclue" ${at(it)}><i class="kn">${it[0]}</i><span>${it[1][1]}</span></li>`).join('')}</ul></div>`;
    clues=`<div class="kclues">${col('A','Åt höger')}${col('D','Nedåt')}</div>`}}
  const word=secret.map(([r,c])=>L[r+','+c]).join('');
- const hid=secret.length?`<div class="ksecret"><p class="p"><b>${ask}</b>${secretHint}</p><div class="ksw">${[...word].map((ch,i)=>`<span class="kcell sec"><b>${i+1}</b>${box(ch,'txt kc')}</span>`).join('')}</div></div>`:'';
+ const hid=secret.length?`<div class="ksecret${word.length>4?' col':''}"><p class="p"><b>${ask}</b>${secretHint}</p><div class="ksw">${[...word].map((ch,i)=>`<span class="kcell sec"><b>${i+1}</b>${box(ch,'txt kc')}</span>`).join('')}</div></div>`:'';
  return {html:`<div class="kwrap ${mode}">${grid}${clues}${hid}</div>`,word,words:words.map(x=>x[0]),
   key:(d=>words.filter(x=>x[4]===d).map(x=>(mode==='num'?num[x[2]+','+x[3]]+' ':'')+x[0]).join(', '))};
 }

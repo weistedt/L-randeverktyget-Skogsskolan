@@ -201,9 +201,10 @@ function bookS11(){const P=[];const ASK='Skriv vad bilden heter. Pilen visar åt
  P.push(A('I leksakslådan',ASK,K11.html,['Åt höger: '+K11.key('A')+' · Nedåt: '+K11.key('D')]));
  const K7=kryss([['PINGVIN','penguin',1,0,'A'],['SVAN','swan',0,4,'D'],['SPINDEL','spider',3,1,'A'],['SÄL','seal',3,1,'D'],['LARV','caterpillar',5,1,'A'],['ÄLG','moose',2,7,'D']],{mode:'num',cell:9.4,clueW:11.5});
  P.push(A('Djur med nummer','Skriv djurets namn vid samma nummer.',K7.html,['Åt höger: '+K7.key('A')+' · Nedåt: '+K7.key('D')]));
- /* Första bokstaven given: stråhatten kan annars bli HATT, och boet och äggkorgen liknar varandra */
- const K10=kryss([['FÅGELBO','nest',0,2,'D'],['ÄGGKORG','egg_basket2',2,0,'A'],['SOLHATT','sunhat',4,0,'A'],['EKOLLON','acorn',6,0,'A']],{mode:'num',given:'first',cell:9.6,clueW:15});
- P.push(A('Långa ord','Två ord blir ett, som sol + ros = solros.',K10.html,['Åt höger: '+K10.key('A')+' · Nedåt: '+K10.key('D')]));
+ /* Sammansatta ord: första delen är ifylld (SNÖ, EK, FÅGEL, IS), barnet skriver den andra. Fyra helt olika bilder. */
+ const LW=[['SNÖGUBBE','snowman',0,0,'A',3],['EKOLLON','acorn',0,7,'D',2],['FÅGELBO','nest',2,1,'A',5],['ISBJÖRN','polarbear',6,1,'A',2]];
+ const K10=kryss(LW.map(x=>x.slice(0,5)),{mode:'num',given:LW.flatMap(([w,,r,c,d,n])=>Array.from({length:n},(_,i)=>d==='A'?[r,c+i]:[r+i,c])),cell:9.2,clueW:14});
+ P.push(A('Långa ord','Första delen finns. Skriv resten av ordet.',K10.html,['Åt höger: '+K10.key('A')+' · Nedåt: '+K10.key('D')]));
  const K9=kryss([['LITEN','STOR',0,0,'A'],['LJUS','MÖRK',0,0,'D'],['SMAL','BRED',3,0,'A'],['KALL','VARM',2,2,'D'],['LÄTT','TUNG',5,2,'A'],['SIST','FÖRST',2,5,'D']],{mode:'num',cell:10.4});
  P.push(A('Motsatser','Skriv motsatsen, som glad och ledsen.',K9.html,['STOR – LITEN, MÖRK – LJUS, BRED – SMAL, VARM – KALL, TUNG – LÄTT, FÖRST – SIST']));
  const K8=kryss([['IGELKOTT','Har taggar och sover på vintern.',3,0,'A'],['UGGLA','Är vaken på natten och säger hu-hu.',1,1,'D'],['SVALA','Liten fågel som bygger bo av lera.',0,3,'D'],

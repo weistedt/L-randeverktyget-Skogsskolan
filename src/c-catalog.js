@@ -17,7 +17,7 @@ const BOOKS=(()=>{const L=[bookM1(),bookM2(),bookM3(),bookM4(),bookM5(),bookM6()
  bookLetters(1,'A','I','s1',{scene:'forest',pose:'owl',props:artIn('apple',30,256,20)+artIn('ball',54,262,18)+artIn('fish',14,268,18)}),
  bookLetters(2,'J','R','s2',{scene:'dusk',pose:'owl_fly',side:'left',x:20,y:140}),
  bookLetters(3,'S','Ö','s3',{scene:'winter',pose:'owl',side:'left'}),
- bookSL(),bookS4(),bookS5(),bookS6(),bookS7(),bookS8(),bookS9(),bookS11(),bookS10(),bookE1(),bookE2(),bookE3(),bookE4(),bookG1(),bookG2(),bookG3(),bookG4(),bookG5(),bookG6(),bookN1(),bookN2(),bookN3(),bookB1(),bookK1(),bookJ1(),bookT1(),bookB2(),bookK2()];
+ bookSL(),bookS4(),bookS5(),bookS6(),bookS7(),bookS8(),bookS9(),bookS11(),bookS10(),bookE1(),bookE2(),bookE3(),bookE5(),bookE4(),bookG1(),bookG2(),bookG3(),bookG4(),bookG5(),bookG6(),bookN1(),bookN2(),bookN3(),bookB1(),bookK1(),bookJ1(),bookT1(),bookB2(),bookK2()];
  const K={m2:'Former och mönster',m4:'Mät och jämför',m5:'Plus och minus',m6:'Gånger',s5:'Rim och stavelser',s6:'Ord och meningar',e1:'Mina första ord',e2:'Vardagsord',sl:'Lägesord',g1:'Landskap',g2:'Kartor',g3:'Sverige',g4:'Världen'};
  /* rev: höj när en bok byggs om så att sidorna inte längre motsvarar gammalt sparat arbete (rensas då i app.js) */
  /* höj revisionen när sidor flyttas eller svar byter plats, annars bockas fel sidor av */

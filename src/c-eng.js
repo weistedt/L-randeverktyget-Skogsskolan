@@ -81,3 +81,38 @@ function bookE2(){const r=rng(88),P=[];
  P.push(A("Ruben's day",'Läs berättelsen på engelska. Svara yes (ja) eller no (nej).',`<div style="flex:1;display:flex;flex-direction:column;gap:2.4cqw"><div class="tray" style="gap:3cqw;padding:3cqw 3.6cqw;align-items:center">${art('fox_wave',22)}<div class="story en" style="flex:1">${st.split('\n').map(l=>`<p>${l}</p>`).join('')}</div>${say(st.replace(/\n/g,' '))}</div><div class="stack" style="gap:1.4cqw">${[['Does Ruben like apples?',0],['Is it sunny today?',1],['Is Ruben sad?',1],['Is Ruben a fox?',0]].map(([q,ok])=>tray(`<span style="font-size:4.4cqw;flex:1">${q}</span>${choice(['yes','no'].map(x=>`<span class="word">${x}</span>`),ok)}`,'padding:1.2cqw 3cqw')).join('')}</div></div>`,['yes','no','no','yes']));
  return {id:'e2',subj:'eng',title:'Hello again!',sub:'Dagar, väder, kläder, känslor',level:3,goal:'Jag kan prata om väder, kläder och känslor på engelska.',hello:'Hello again! Ruben här. Nu lär vi oss veckans dagar, vädret och hur vi känner oss. Ready? Let’s go!',cover:{scene:'winter',pose:'fox',side:'left',props:artIn('scarf',20,262,20)+artIn('mitten',44,266,16)},pages:P};
 }
+
+/* ================= Crossword fun! (e5, 4 tassar) =================
+   Samma korsordsmotor som Korsordsskogen (kryss, ordsok, egetKryss i c-common.js; rutnät från tools/kryss.py).
+   Orden kommer i första hand från e1–e4 (djur, mat, kläder, väder, siffror, färger, motsatser) eftersom barnen är svensktalande.
+   Instruktionerna är på svenska. Inget svarsord förekommer på två sidor; inga bilder på Ebba, Otto, Ruben, Siri eller Ivar som ledtråd. */
+function bookE5(){const P=[];const ASK='Skriv på engelska vad bilden heter.';
+ const K1=kryss([['CAR','car',1,3,'D'],['BIRD','bird',3,1,'A'],['BOX','cardbox',3,1,'D'],['DOG','dog',3,4,'D']],{given:'first',cell:12.6});
+ P.push(A('Four little words','Skriv ordet på engelska. Första bokstaven finns redan.',K1.html,['Across: '+K1.key('A')+' · Down: '+K1.key('D')]));
+ const K2=kryss([['BREAD','bread',1,1,'A'],['APPLE','apple',1,4,'D'],['CAKE','cake',2,6,'D'],['CHEESE','cheese',5,1,'A']],{given:'cons',cell:11});
+ P.push(A('Missing vowels','Konsonanterna står redan där. Skriv vokalerna: A E I O U.',K2.html,['Across: '+K2.key('A')+' · Down: '+K2.key('D')]));
+ const K3=kryss([['FISH','fish',1,1,'A'],['HAT','hat',1,4,'D'],['TREE','tree',3,4,'A'],['EGG','egg',3,7,'D']],{cell:10.2});
+ P.push(A('Word snake','Sista bokstaven i ett ord blir första bokstaven i nästa.',K3.html,[K3.words.join(' → ')]));
+ const K4=kryss([['MOUSE','mouse',1,2,'A'],['SHEEP','sheep',1,5,'D'],['HORSE','horse',3,1,'A'],['HEN','hen',3,1,'D'],['PIG','pig',5,5,'A']],{secret:[[1,2],[3,2],[1,3]],ask:'Vad säger kon?',cell:10.4});
+ P.push(A('On the farm',ASK,K4.html,['Across: '+K4.key('A')+' · Down: '+K4.key('D')+' · Kon säger: '+K4.word]));
+ P.push(A('Find the clothes','Orden går åt höger eller nedåt. Tryck på dem.',
+  ordsok(['MISWTUG','ILCSOCK','THANWWS','TERMDGH','EDFTBNO','NBOOTTE'],
+   [['SOCK','sock',1,3,'A'],['BOOT','boot',5,1,'A'],['MITTEN','mitten',0,0,'D'],['SCARF','scarf',0,2,'D'],['SHOE','shoe',2,6,'D']],{cell:9.6}),
+  ['Across: SOCK, BOOT · Down: MITTEN, SCARF, SHOE']));
+ const K6=kryss([['STAR','star',1,1,'D'],['MOON','moon',1,6,'D'],['SUN','sun',2,4,'D'],['SNOW','snow',2,4,'A'],['RAIN','rain',4,1,'A']],{cell:10.6});
+ P.push(A('In the sky',ASK,K6.html,['Across: '+K6.key('A')+' · Down: '+K6.key('D')]));
+ const K7=kryss([['FOUR',dice(4,11),0,2,'D'],['FIVE',dice(5,11),0,4,'D'],['THREE',dice(3,11),3,0,'A'],['TWO',dice(2,11),3,0,'D'],['ONE',dice(1,11),5,0,'A']],{mode:'num',cell:10.8});
+ P.push(A('Count the dots','Räkna prickarna. Skriv talet på engelska.',K7.html,['Across: '+K7.key('A')+' · Down: '+K7.key('D')]));
+ const K8=kryss([['FROG','frog',0,4,'D'],['BEAR','bear',1,1,'A'],['LION','lion',2,6,'D'],['PENGUIN','penguin',3,1,'A'],['ELEPHANT','elephant',5,0,'A']],{mode:'num',cell:10,clueW:12});
+ P.push(A('Animals','Skriv djurets namn på engelska vid samma nummer.',K8.html,['Across: '+K8.key('A')+' · Down: '+K8.key('D')]));
+ const K9=kryss([['BANANA','banan',0,1,'D'],['FLOWER','blomma',0,3,'D'],['BALL','boll',1,0,'A'],['CAT','katt',3,5,'D'],['COW','ko',3,5,'A'],['CARROT','morot',5,0,'A']],{mode:'num',cell:10.4});
+ P.push(A('In English, please!','Skriv ordet på engelska.',K9.html,['banan – BANANA, blomma – FLOWER, boll – BALL, katt – CAT, ko – COW, morot – CARROT']));
+ const K10=kryss([['GREEN','grön',0,1,'D'],['BLUE','blå',2,3,'D'],['YELLOW','gul',3,0,'A'],['RED','röd',5,2,'A']],{mode:'num',cell:11.2});
+ P.push(A('Colours','Skriv färgen på engelska.',K10.html,['grön – GREEN, blå – BLUE, gul – YELLOW, röd – RED']));
+ const K11=kryss([['COLD','HOT',0,4,'D'],['HAPPY','SAD',1,2,'D'],['SMALL','BIG',2,0,'A'],['SLOW','FAST',2,0,'D'],['YES','NO',5,2,'A']],{mode:'num',cell:10.3});
+ P.push(A('Opposites','Skriv motsatsen, som up och down.',K11.html,['HOT – COLD, SAD – HAPPY, BIG – SMALL, FAST – SLOW, NO – YES']));
+ const K12=kryss([['BUS','bus',1,4,'D'],['BOOK','book',1,4,'A'],['KITE','kite',1,7,'D'],['BOAT','boat',2,2,'D'],['HOUSE','house',3,1,'A'],['TRAIN','train',5,2,'A']],{secret:[[5,3],[3,3],[2,2],[4,7],[5,6]],cell:10});
+ P.push(A('The last crossword',ASK,K12.html,['Across: '+K12.key('A')+' · Down: '+K12.key('D')+' · Hemligt ord: '+K12.word]));
+ P.push(A('My own crossword','Gör ett eget korsord med engelska ord. Rita en bild och en pil. Låt någon annan lösa det!',`<div class="pb-own" style="flex:1;display:flex;flex-direction:column;justify-content:center">${egetKryss(8,8)}</div>`));
+ return {id:'e5',subj:'eng',title:'Crossword fun!',sub:'Bildkryss, ordsök, siffror, färger',kick:'Crosswords',level:4,facit:true,goal:'Jag kan lösa korsord på engelska.',hello:"Hi! Ruben här. Nu löser vi korsord på engelska. Räkna rutorna!",cover:{scene:'meadow',pose:'fox',props:''},pages:P};
+}
