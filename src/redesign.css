@@ -1,49 +1,29 @@
-/* ===================== Redesign "Skogsstigen" (2026-10-29, v4: årstiderna längs sidan) =====================
+/* ===================== Redesign "Skogsstigen" (2026-10-29, v5: årstiderna singlar ner) =====================
    Allt gäller under html.rd så att förhandsvisningen kan växla före/efter.
    Princip: färre vita brickor (glas eller ingenting), hyllans vanliga ljusa bakgrund,
-   och ett större 3D-motiv per avsnitt som följer årstiderna nedåt sidan. */
+   och en stillbild av löv, snöflingor och vårblad som singlar ner över hyllan, årstid för årstid. */
 html.rd{--glass:color-mix(in srgb,var(--card) 42%,transparent); --glass-2:color-mix(in srgb,var(--card) 68%,transparent); --glass-line:color-mix(in srgb,#fff 55%,transparent)}
 @media (prefers-color-scheme: dark){html.rd:not([data-theme="light"]){--glass-line:color-mix(in srgb,#fff 10%,transparent)}}
 html.rd[data-theme="dark"]{--glass-line:color-mix(in srgb,#fff 10%,transparent)}
 .rd-toggle{display:none}
 
-/* ---------- Årstiderna längs sidan ----------
-   Ett större 3D-motiv per avsnitt, fast på sidan vid rubriken (rullar med innehållet).
-   Ordningen följer året: sommar, höst, vinter, vår … (se RD_YEAR i scene.js). */
-.rd-season{display:none}
-html.rd .subj{position:relative}
-html.rd .subj>.subj-h,html.rd .subj>.books,html.rd .bbi>.bbi-art,html.rd .bbi>.bbi-txt,html.rd .faq>.faq-h,html.rd .faq>.faq-grid{position:relative; z-index:1}
-html.rd .faq{position:relative}
-html.rd .rd-season{display:block; position:absolute; z-index:0; pointer-events:none; right:2%; top:-34px; width:var(--sz,120px)}
-html.rd .rd-season i{display:block}
-html.rd .rd-season img{display:block; width:100%; height:auto; filter:drop-shadow(0 12px 14px rgba(40,40,20,.16))}
-html.rd .rd-season.leaf{--sz:150px; top:-40px}
-html.rd .rd-season.snow{--sz:118px; top:-30px}
-html.rd .rd-season.snow img{filter:drop-shadow(0 3px 8px rgba(50,70,90,.32))}
-html.rd .rd-season.butterfly{--sz:128px}
-html.rd .rd-season.bee{--sz:112px; top:-26px}
-html.rd .rd-season.ladybug{--sz:84px; top:-18px}
-html.rd .rd-season.flower{--sz:104px; top:-30px}
-html.rd .bbi>.rd-season{top:-10px; right:-6px}
-html.rd .faq>.rd-season{top:-46px; right:0}
-@media (prefers-reduced-motion:no-preference){
- html.rd .rd-season.sway i{transform-origin:50% 92%; animation:rdSway 7s ease-in-out infinite alternate}
- html.rd .rd-season.spin i{animation:rdSpin 120s linear infinite}
- html.rd .rd-season.hover i{animation:rdHover 4.2s ease-in-out infinite alternate}
- html.rd .rd-season.flap i{animation:rdHover 5s ease-in-out infinite alternate}
- html.rd .rd-season.flap img{animation:rdFlap 5s ease-in-out infinite}
-}
-@keyframes rdSway{from{transform:rotate(-6deg)}to{transform:rotate(7deg)}}
-@keyframes rdSpin{to{transform:rotate(360deg)}}
-@keyframes rdHover{from{transform:translate3d(0,-5px,0) rotate(-3deg)}to{transform:translate3d(0,6px,0) rotate(3deg)}}
-@keyframes rdFlap{0%,70%,100%{transform:scaleX(1)}76%,88%{transform:scaleX(.62)}82%,94%{transform:scaleX(1)}}
-@media (max-width:700px){
- html.rd .subj-h{padding-right:58px}
- html.rd .rd-season{right:-6px; top:-22px; width:calc(var(--sz,120px) * .58)}
- html.rd .rd-season.leaf{top:-28px}
- html.rd .faq-h{padding-right:58px}
-}
-
+/* ---------- Årstiderna singlar ner (stillbild) ----------
+   Ett lager bakom innehållet (långt bort + mitt) och ett tunt lager ovanpå (nära,
+   stora och suddiga i kanterna). Fast på sidan, rullar med innehållet. Se scene.js. */
+html.rd .shelf{position:relative; overflow-x:clip}
+html.rd .shelf>.hero,html.rd .shelf>.wrap{position:relative; z-index:1}
+.rd-sky{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+.rd-sky.near{z-index:2}
+html:not(.rd) .rd-sky{display:none}
+.rd-k{position:absolute; display:block}
+.rd-k img{display:block; width:100%; height:auto}
+.rd-k.d0 img{opacity:.55; filter:blur(1.2px)}
+.rd-k.d1 img{opacity:.92; filter:drop-shadow(0 8px 8px rgba(40,35,15,.14))}
+.rd-k.d2 img{opacity:.8; filter:blur(3.5px)}
+.rd-k.sn.d1 img{filter:drop-shadow(0 2px 5px rgba(50,70,90,.32))}
+.rd-k.sn.d0 img{opacity:.7; filter:blur(1px) drop-shadow(0 1px 3px rgba(50,70,90,.3))}
+.rd-k.bug img{filter:drop-shadow(0 10px 10px rgba(40,35,15,.16))}
+@media print{.rd-sky{display:none!important}}
 
 /* ---------- Hero ---------- */
 html.rd .hero{background:transparent}
@@ -133,7 +113,7 @@ html.rd .bb-peek>span{background:none; box-shadow:none; color:#fff; text-shadow:
 /* Förhandsvisningens växlare (tas bort vid införandet) */
 .rd-toggle{display:block; position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top,0px)); z-index:60; border:0; border-radius:999px; padding:9px 14px; font:700 .8rem var(--f-read); color:#fff; background:rgba(28,40,34,.78); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px)}
 .reader:not([hidden])~.rd-toggle{display:none}
-@media print{.rd-season,.rd-toggle{display:none!important}}
+@media print{.rd-toggle{display:none!important}}
 /* Omslagets nivårad: text på omslaget i stället för vit bricka */
 html.rd .cover .cv-lv{background:none!important; box-shadow:none!important; padding-left:0!important}
 html.rd .cover.ph3d.dk .cv-lv{color:#FBF6EC; text-shadow:0 .2cqw 1.6cqw rgba(10,18,24,.55)}
