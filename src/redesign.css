@@ -8,7 +8,14 @@ html.rd[data-theme="dark"]{--glass-line:color-mix(in srgb,#fff 10%,transparent)}
 .rd-scene,.rd-bbscene,.rd-toggle{display:none}
 
 /* ---------- Svävande dekor bakom hyllan ---------- */
-@media (prefers-reduced-motion:no-preference){html.rd .rd-scene{display:block}}
+html.rd .rd-scene{display:block}
+@media (prefers-reduced-motion:reduce){
+ /* Minskad rörelse: ikonerna ligger stilla, utspridda, och flygarna visas inte */
+ .rd-f,.rd-f i,.rd-fly,.rd-fly i,.rd-fly img{animation:none!important}
+ html.rd .rd-f{top:var(--ty)}
+ html.rd .rd-f i{transform:rotate(calc(18deg * var(--r)))}
+ html.rd .rd-fly{display:none}
+}
 .rd-scene{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; contain:strict}
 .rd-scene img{display:block; width:100%; height:auto}
 .rd-f{position:absolute; top:-9vh; left:var(--x); width:var(--w); animation:rdFall var(--d) linear var(--dl) infinite}
@@ -23,6 +30,9 @@ html.rd[data-theme="dark"]{--glass-line:color-mix(in srgb,#fff 10%,transparent)}
 .rd-fly.be i{animation-duration:1.3s}
 .rd-fly.be img{animation:rdBuzz .12s linear infinite alternate}
 @media (max-width:700px){.rd-f:nth-child(n+6){display:none}.rd-fly.bf{width:34px}.rd-fly.be{width:28px}}
+/* På mobil täcker böckerna nästan hela bredden, så bakom dem syns nästan ingenting.
+   Där seglar ikonerna i stället ovanpå (klick går igenom), färre och lite genomskinliga. */
+@media (max-width:700px) and (prefers-reduced-motion:no-preference){html.rd .rd-scene{z-index:3}.rd-f.lf img{opacity:.7}.rd-f.sn img{opacity:.85}}
 html.rd-paused .rd-scene *{animation-play-state:paused!important}
 @keyframes rdFall{0%{transform:translate3d(0,0,0); opacity:0}6%{opacity:1}92%{opacity:1}100%{transform:translate3d(0,118vh,0); opacity:0}}
 @keyframes rdSway{from{transform:translate3d(calc(var(--sw) * -1),0,0) rotate(calc(-26deg * var(--r)))}to{transform:translate3d(var(--sw),0,0) rotate(calc(32deg * var(--r)))}}
@@ -65,7 +75,7 @@ html.rd .bk-meta{gap:5px}
 html.rd .bk-age{display:flex; flex-wrap:wrap; align-items:center; gap:2px 6px; font-size:.78rem; color:color-mix(in srgb,var(--fg) 72%,var(--fg-soft))}
 html.rd .bk-age .paws svg{width:13px; height:13px}
 html.rd .bk-age .fit{font-style:normal; font-weight:700; color:var(--accent); background:none; padding:0; font-size:.78rem}
-html.rd .bk-age .fit{flex-basis:100%}
+html.rd .bk-age .fit{flex-basis:100%; min-height:1.25em; line-height:1.25em}
 html.rd .bk-prog{display:flex; align-items:center; gap:8px}
 html.rd .bk-prog .bk-bar{flex:1; height:4px; background:color-mix(in srgb,var(--fg) 14%,transparent)}
 html.rd .bk-prog small{font-size:.74rem; color:color-mix(in srgb,var(--fg) 72%,var(--fg-soft)); font-variant-numeric:tabular-nums}

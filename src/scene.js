@@ -11,7 +11,7 @@ function rdInit(){const de=document.documentElement,I=typeof ICONIMG!=='undefine
   const img=k=>I[k]?`<img alt="" src="${I[k]}" decoding="async">`:'';
   // Fallande: löv och snöflingor om vartannat, utspridda i tid så att 3–4 syns samtidigt.
   const fall=[['leaf_autumn',8,40,27,0],['snow',30,28,31,-6],['leaf_maple',54,36,29,-12],['snow',76,24,34,-19],['leaf_birch',92,30,26,-4],['snow',16,30,33,-25],['leaf_oak',66,34,30,-16],['snow',44,26,36,-29]];
-  let h=fall.map(([k,x,w,d,dl],i)=>`<span class="rd-f ${k==='snow'?'sn':'lf'}" style="--x:${x}%;--w:${w}px;--d:${d}s;--dl:${dl}s;--sw:${k==='snow'?14:30}px;--r:${i%2?-1:1}"><i>${img(k)}</i></span>`).join('');
+  let h=fall.map(([k,x,w,d,dl],i)=>`<span class="rd-f ${k==='snow'?'sn':'lf'}" style="--x:${x}%;--w:${w}px;--d:${d}s;--dl:${dl}s;--sw:${k==='snow'?14:30}px;--r:${i%2?-1:1};--ty:${(10+i*11)%92+4}%"><i>${img(k)}</i></span>`).join('');
   // Flygare: en fjäril (vänster→höger, lång paus) och ett bi (en annan tid).
   h+=`<span class="rd-fly bf" style="--y:34vh;--d:46s;--dl:-8s"><i>${img('butterfly')}</i></span>`;
   h+=`<span class="rd-fly be" style="--y:66vh;--d:58s;--dl:-36s"><i>${img('bee')}</i></span>`;
