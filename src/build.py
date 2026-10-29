@@ -39,7 +39,8 @@ def _box(p):
     im = Image.open(p); W, H = im.size
     # scenbilder och bildval med mjukt uttonade kanter: lådan räknas från den nästan täckande delen, så att uttoningen hamnar utanför
     thr = 200 if p.stem.startswith(('icon_sc_', 'icon_vg_')) and p.stem[5:] not in ('sc_skog', 'sc_park', 'sc_rum') else 20
-    bb = im.getchannel('A').point(lambda v: 255 if v > thr else 0).getbbox()
+    # helt täckande bild (sparad utan alfa): lådan är hela bilden
+    bb = im.getchannel('A').point(lambda v: 255 if v > thr else 0).getbbox() if 'A' in im.getbands() else (0, 0, W, H)
     if not bb: return None
     x0, y0, x1, y1 = [max(0, min(100, round(v * 100 / W) + d)) for v, d in zip(bb, (-2, -2, 2, 2))]
     return [x0, y0, x1 - x0, y1 - y0]

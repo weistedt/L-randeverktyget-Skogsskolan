@@ -31,3 +31,4 @@ sc_vilse -
 sc_bad -
 sc_rok -
 sc_koja -
+sc_ang_vid -   (2026-10-29: tom äng med perspektiv, bakgrund för Nära och långt bort)

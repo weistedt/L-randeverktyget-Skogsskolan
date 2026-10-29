@@ -318,6 +318,9 @@ html{-webkit-text-size-adjust:100%}
 .print-root .say,.bk-cv .say{display:none}
 .scn{position:relative; display:inline-block; line-height:0; align-self:center}
 .scn-it{position:absolute; display:block}
+/* saker som står på marken i en bild med perspektiv: mjuk skugga under, så de inte svävar */
+.scn.persp .pimg{border-radius:2.4cqw}
+.scn-it.gnd::before{content:""; position:absolute; left:14%; right:14%; bottom:2%; height:9%; border-radius:50%; background:radial-gradient(closest-side,rgba(38,48,22,.42),rgba(38,48,22,0)); pointer-events:none}
 .scn-it .sel{display:block}
 .rosegrid{display:grid; grid-template-columns:auto auto auto; align-items:center; justify-items:center; gap:2cqw 3cqw}
 .arrows{display:inline-flex; gap:1.2cqw; flex:1}

@@ -9,11 +9,11 @@ R = pathlib.Path(__file__).resolve().parent.parent
 SRC = R / 'assets/recraft-original/scenes'; OUT = R / 'src/img'
 W = 1000
 # sökbilder där barnet trycker i bilden behåller raka kanter
-HARD = {'sc_skog', 'sc_park', 'sc_rum'}
+HARD = {'sc_skog', 'sc_park', 'sc_rum', 'sc_ang_vid'}
 # beskärning (vänster, topp, höger, botten i andelar) per bild
 CROP = {'sc_kotte': (.045, 0, .955, 1)}
 # mindre bild för detaljrika motiv (gräs) så att filen inte blir för stor
-SIZE = {'sc_park': (820, 70), 'sc_rum': (820, 74), 'sc_skatt': (760, 76), 'sc_skog': (900, 72), 'sc_norrsken': (760, 74)}
+SIZE = {'sc_ang_vid': (760, 72), 'sc_park': (820, 70), 'sc_rum': (820, 74), 'sc_skatt': (760, 76), 'sc_skog': (900, 72), 'sc_norrsken': (760, 74)}
 
 def fix(n, im):
     if n == 'sc_storm':  # Recraft skrev "wait!" i himlen: fyll med en lodrät övergång mellan himlen ovanför och nedanför

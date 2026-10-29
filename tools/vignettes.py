@@ -19,6 +19,14 @@ def cells(im):
             yield im.crop((round(x0 + w * ins), round(y0 + h * ins), round(x0 + w / 2 - w * ins), round(y0 + h / 2 - h * ins)))
 
 
+NOFADE = {'upp_fagel', 'ner_fagel', 'upp_boll', 'ner_boll', 'upp_ekorre', 'ner_ekorre'}
+
+
+def flat(im):
+    w, h = im.size; c = round(min(w, h) * .02)
+    return im.crop((c, c, w - c, h - c)).resize((S, round(S * h / w)), Image.LANCZOS).convert('RGBA')
+
+
 def fade(im):
     im = im.resize((S, round(S * im.size[1] / im.size[0])), Image.LANCZOS).convert('RGB')
     f = round(min(im.size) * .085); m = Image.new('L', im.size, 0)
@@ -34,9 +42,14 @@ for line in (R / 'docs/vignette-grids.txt').read_text().split('\n'):
     f = G / f'{gid}.webp'
     if not f.exists():
         subprocess.run(['curl', '-sS', '-m', '60', '-o', str(f), url], check=True)
-    for n, cell in zip(names.split(','), cells(Image.open(f).convert('RGB'))):
+    src = Image.open(f).convert('RGB'); nl = names.split(',')
+    # ett enda namn = hela bilden (inte rutnät)
+    parts = [src] if len(nl) == 1 else list(cells(src))
+    for n, cell in zip(nl, parts):
         if n == '-':
             continue
-        fade(cell).save(OUT / f"icon_vg_{n}.webp", "WEBP", quality=76, method=6)
+        # bilder i kort med ram får raka kanter: uttoningen skulle annars beskära motivet vid kanten
+        im = flat(cell) if n in NOFADE else fade(cell)
+        im.save(OUT / f"icon_vg_{n}.webp", "WEBP", quality=76, method=6)
         print(n, end=' ')
 print()
