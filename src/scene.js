@@ -1,18 +1,21 @@
-/* ===== Skogsstigen – lugn bakgrund (redesign 2026-10-29, v2) =====
-   En enda fast bakgrund rakt igenom: samma sommaräng som omslagsbilden, utan
-   figurerna, så att heron flyter över i bakgrunden utan skarv. Inget bildbyte
-   när man rullar. Bara några få ljuspunkter (pollen) svävar, och scenen andas
-   mycket långsamt. Av vid prefers-reduced-motion, pausad när fliken är dold. */
+/* ===== Skogsstigen – svävande dekor (redesign 2026-10-29, v3) =====
+   Ingen bakgrundsbild. Hyllan har kvar sin vanliga ljusa bakgrund, och bakom
+   böckerna seglar några få 3D-ikoner: löv och snöflingor om vartannat, ibland
+   en fjäril eller ett bi som flyger förbi. Ikonerna ligger bakom innehållet.
+   Bara transform/opacity animeras. Av vid prefers-reduced-motion, pausat när
+   fliken är dold. Bakgrundsbilden från v2 ligger i assets/bank/. */
 const RD_PREVIEW=true; // förhandsvisning: knappen "Visa före/efter"
 function rdOn(){return document.documentElement.classList.contains('rd')}
-function rdInit(){const de=document.documentElement;
- const H=typeof HEROIMG!=='undefined'?HEROIMG:{};
- if(H.hero_bg_ang)de.style.setProperty('--rd-ang',`url(${H.hero_bg_ang})`);
- if(H.hero_bg_angs)de.style.setProperty('--rd-angs',`url(${H.hero_bg_angs})`);
+function rdInit(){const de=document.documentElement,I=typeof ICONIMG!=='undefined'?ICONIMG:{};
  const el=$('rdScene');if(el&&!el.childElementCount){
-  const R=(a,b)=>a+Math.random()*(b-a);let p='';
-  for(let i=0;i<10;i++)p+=`<span class="rd-p" style="--x:${R(2,98).toFixed(1)}%;--y:${R(35,95).toFixed(0)}%;--d:${R(14,24).toFixed(1)}s;--w:${R(-24,0).toFixed(1)}s;--s:${R(.5,1.2).toFixed(2)}"></span>`;
-  el.innerHTML='<i class="rd-l"></i><i class="rd-rays"></i><div class="rd-parts">'+p+'</div>'}
+  const img=k=>I[k]?`<img alt="" src="${I[k]}" decoding="async">`:'';
+  // Fallande: löv och snöflingor om vartannat, utspridda i tid så att 3–4 syns samtidigt.
+  const fall=[['leaf_autumn',8,40,27,0],['snow',30,28,31,-6],['leaf_maple',54,36,29,-12],['snow',76,24,34,-19],['leaf_birch',92,30,26,-4],['snow',16,30,33,-25],['leaf_oak',66,34,30,-16],['snow',44,26,36,-29]];
+  let h=fall.map(([k,x,w,d,dl],i)=>`<span class="rd-f ${k==='snow'?'sn':'lf'}" style="--x:${x}%;--w:${w}px;--d:${d}s;--dl:${dl}s;--sw:${k==='snow'?14:30}px;--r:${i%2?-1:1}"><i>${img(k)}</i></span>`).join('');
+  // Flygare: en fjäril (vänster→höger, lång paus) och ett bi (en annan tid).
+  h+=`<span class="rd-fly bf" style="--y:34vh;--d:46s;--dl:-8s"><i>${img('butterfly')}</i></span>`;
+  h+=`<span class="rd-fly be" style="--y:66vh;--d:58s;--dl:-36s"><i>${img('bee')}</i></span>`;
+  el.innerHTML=h}
  document.addEventListener('visibilitychange',()=>de.classList.toggle('rd-paused',document.hidden));
  if(RD_PREVIEW){const b=document.createElement('button');b.className='rd-toggle';b.type='button';const lab=()=>b.textContent=rdOn()?'Visa gamla designen':'Visa nya designen';lab();
   b.onclick=()=>{de.classList.toggle('rd');try{localStorage.setItem('skogsskolan-rd',rdOn()?'1':'0')}catch(e){}lab();renderShelf()};document.body.appendChild(b)}
