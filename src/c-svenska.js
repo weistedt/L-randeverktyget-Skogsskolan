@@ -180,34 +180,37 @@ Hon flög över hav och berg i många dagar. Till slut såg hon den röda stugan
    Regler: varje bild ska bara ha ett rimligt ord med rätt antal rutor; inga bilder på Ebba, Otto, Ruben,
    Siri eller Ivar som ledtråd (barnet skriver namnet i stället för djuret) – deras namn är hemliga ord.
    Inget svarsord förekommer på två sidor. Svaren står aldrig i instruktionen. */
-function bookS11(){const P=[];
+function bookS11(){const P=[];const ASK='Skriv vad bilden heter. Pilen visar åt vilket håll.';
+ /* Ordningen går från lätt till svår: givna bokstäver först, numrerade korsord och gåtor sist. */
  const K1=kryss([['SKO','shoe',3,1,'A'],['BOK','book',2,3,'D'],['BÅT','boat',2,3,'A'],['MUS','mouse',1,1,'D']],{given:'first',cell:12.6});
  P.push(A('Fyra små ord','Skriv vad bilden heter. Första bokstaven finns redan.',K1.html,['Åt höger: '+K1.key('A')+' · Nedåt: '+K1.key('D')]));
+ const K4=kryss([['TÅRTA','cake',1,7,'D'],['OST','cheese',4,5,'A'],['MOROT','carrot',1,3,'A'],['MJÖLK','milk',1,3,'D'],['BRÖD','bread',3,1,'A'],['KAKA','cookie',5,1,'A']],{given:'cons',cell:10.2});
+ P.push(A('Vokalerna saknas','Konsonanterna står redan där. Skriv vokalerna: A E I O U Y Å Ä Ö.',K4.html,['Åt höger: '+K4.key('A')+' · Nedåt: '+K4.key('D')]));
+ /* T är givet: tåget är ett lok, och LOK har också tre bokstäver */
+ const K5=kryss([['TÅG','train',1,1,'A'],['GÅS','goose',1,3,'D'],['SVAMP','mushroom',3,3,'A'],['PENNA','pencil',3,7,'D']],{given:[[1,1]],cell:9.8});
+ P.push(A('Ordormen','Sista bokstaven i ett ord blir första bokstaven i nästa.',K5.html,[K5.words.join(' → ')]));
  const K2=kryss([['FISK','fish',1,1,'A'],['SOL','sun',1,3,'D'],['TÄLT','tent',3,1,'A'],['ÄGG','egg',3,2,'D'],['GRODA','frog',5,2,'A'],['MYRA','ant',2,6,'D']],{secret:[[2,3],[3,4],[3,1],[5,4]],cell:10.6});
  P.push(A('Ute i naturen','Skriv ordet där pilen pekar, en bokstav i varje ruta.',K2.html,['Åt höger: '+K2.key('A')+' · Nedåt: '+K2.key('D')+' · Hemligt ord: '+K2.word]));
  const K3=kryss([['HÄST','horse',3,4,'A'],['KATT','cat',1,7,'D'],['HUS','house',3,4,'D'],['GRIS','pig',5,1,'A'],['FÅR','sheep',3,2,'D'],['MASK','worm',1,4,'A']],{cell:10.4});
- P.push(A('På bondgården','',K3.html,['Åt höger: '+K3.key('A')+' · Nedåt: '+K3.key('D')]));
- const K4=kryss([['TÅRTA','cake',1,7,'D'],['OST','cheese',4,5,'A'],['MOROT','carrot',1,3,'A'],['MJÖLK','milk',1,3,'D'],['BRÖD','bread',3,1,'A'],['KAKA','cookie',5,1,'A']],{given:'cons',cell:10.2});
- P.push(A('Vokalerna saknas','Konsonanterna står redan där. Skriv vokalerna: A E I O U Y Å Ä Ö.',K4.html,['Åt höger: '+K4.key('A')+' · Nedåt: '+K4.key('D')]));
- const K5=kryss([['TÅG','train',1,1,'A'],['GÅS','goose',1,3,'D'],['SVAMP','mushroom',3,3,'A'],['PENNA','pencil',3,7,'D']],{cell:9.8});
- P.push(A('Ordormen','Varje ord börjar med samma bokstav som ordet före slutar på.',K5.html,[K5.words.join(' → ')]));
+ P.push(A('På bondgården',ASK,K3.html,['Åt höger: '+K3.key('A')+' · Nedåt: '+K3.key('D')]));
  P.push(A('Hitta kläderna','Orden går åt höger eller nedåt. Tryck på dem.',
-  ordsok(['TRÖJASMH','PSEÄPTMA','VANTEÖÖL','VKNOPVSS','FBDODESD','TKMÅÖLAU','OSOCKAUK'],
+  ordsok(['TRÖJASMH','PSEÄPTMA','VANTEÖÖL','VKNOPVSS','FBDODESD','TKMÅILAU','OSOCKAUK'],
    [['TRÖJA','sweater',0,0,'A'],['VANTE','mitten',2,0,'A'],['SOCKA','sock',6,1,'A'],['HALSDUK','scarf',0,7,'D'],['STÖVEL','boot',0,5,'D'],['MÖSSA','woolhat',1,6,'D']],{cell:8.2}),
-  ['Åt höger: TRÖJA (rad 1), VANTE (rad 3), SOCKA (rad 7) · Nedåt: STÖVEL, MÖSSA, HALSDUK (de tre högra kolumnerna)']));
+  ['Åt höger: TRÖJA, VANTE, SOCKA · Nedåt: STÖVEL, MÖSSA, HALSDUK']));
+ const K11=kryss([['STJÄRNA','star',3,1,'A'],['NALLE','teddy',2,7,'D'],['NYCKEL','key',5,2,'A'],['DRAKE','kite',2,5,'D'],['BUSS','bus',1,1,'D'],['BOLL','ball',1,1,'A']],{cell:10.2});
+ P.push(A('I leksakslådan',ASK,K11.html,['Åt höger: '+K11.key('A')+' · Nedåt: '+K11.key('D')]));
  const K7=kryss([['PINGVIN','penguin',1,0,'A'],['SVAN','swan',0,4,'D'],['SPINDEL','spider',3,1,'A'],['SÄL','seal',3,1,'D'],['LARV','caterpillar',5,1,'A'],['ÄLG','moose',2,7,'D']],{mode:'num',cell:9.4,clueW:11.5});
  P.push(A('Djur med nummer','Skriv djurets namn vid samma nummer.',K7.html,['Åt höger: '+K7.key('A')+' · Nedåt: '+K7.key('D')]));
- const K8=kryss([['IGELKOTT','Har taggar och sover på vintern.',3,0,'A'],['UGGLA','Är vaken på natten och säger hu-hu.',1,1,'D'],['SVALA','Flyger söderut när det blir höst.',0,3,'D'],
-  ['EKORRE','Klättrar i träd och samlar nötter.',1,5,'D'],['RÄV','Har röd päls och smyger efter möss.',5,5,'A'],['MÅNE','Lyser på himlen på natten.',6,2,'A']],{mode:'num',list:true,cell:7.6});
- P.push(A('Gåtor i skogen','Skriv svaret vid samma nummer.',K8.html,['Åt höger: '+K8.key('A')+' · Nedåt: '+K8.key('D')]));
+ /* Första bokstaven given: stråhatten kan annars bli HATT, och boet och äggkorgen liknar varandra */
+ const K10=kryss([['FÅGELBO','nest',0,2,'D'],['ÄGGKORG','egg_basket2',2,0,'A'],['SOLHATT','sunhat',4,0,'A'],['EKOLLON','acorn',6,0,'A']],{mode:'num',given:'first',cell:9.6,clueW:15});
+ P.push(A('Långa ord','Två ord blir ett, som sol + ros = solros.',K10.html,['Åt höger: '+K10.key('A')+' · Nedåt: '+K10.key('D')]));
  const K9=kryss([['LITEN','STOR',0,0,'A'],['LJUS','MÖRK',0,0,'D'],['SMAL','BRED',3,0,'A'],['KALL','VARM',2,2,'D'],['LÄTT','TUNG',5,2,'A'],['SIST','FÖRST',2,5,'D']],{mode:'num',cell:10.4});
  P.push(A('Motsatser','Skriv motsatsen, som glad och ledsen.',K9.html,['STOR – LITEN, MÖRK – LJUS, BRED – SMAL, VARM – KALL, TUNG – LÄTT, FÖRST – SIST']));
- const K10=kryss([['FÅGELBO','nest',0,2,'D'],['ÄGGKORG','egg_basket2',2,0,'A'],['SOLHATT','sunhat',4,0,'A'],['EKOLLON','acorn',6,0,'A']],{mode:'num',cell:9.6,clueW:15});
- P.push(A('Långa ord','Två ord blir ett: sol + ros = solros.',K10.html,['Åt höger: '+K10.key('A')+' · Nedåt: '+K10.key('D')]));
- const K11=kryss([['STJÄRNA','star',3,1,'A'],['NALLE','teddy',2,7,'D'],['NYCKEL','key',5,2,'A'],['DRAKE','kite',2,5,'D'],['BUSS','bus',1,1,'D'],['BOLL','ball',1,1,'A']],{cell:10.2});
- P.push(A('I leksakslådan','',K11.html,['Åt höger: '+K11.key('A')+' · Nedåt: '+K11.key('D')]));
- const K12=kryss([['CYKEL','bike',1,2,'D'],['KYRKA','church',2,1,'A'],['BANAN','banana',1,5,'D'],['BIL','car',1,5,'A'],['LÖV','leaf_autumn',1,7,'D'],['ANKA','swim_duck',5,4,'A'],['KO','cow',5,6,'D']],{secret:[[1,6],[3,7],[5,4],[2,3]],cell:9.8});
- P.push(A('Stora korsordet','',K12.html,['Åt höger: '+K12.key('A')+' · Nedåt: '+K12.key('D')+' · Hemligt ord: '+K12.word]));
+ const K8=kryss([['IGELKOTT','Har taggar och sover på vintern.',3,0,'A'],['UGGLA','Är vaken på natten och säger hu-hu.',1,1,'D'],['SVALA','Liten fågel som bygger bo av lera.',0,3,'D'],
+  ['EKORRE','Klättrar i träd och samlar nötter.',1,5,'D'],['RÄV','Har röd päls och smyger efter möss.',5,5,'A'],['MÅNE','Lyser på himlen på natten.',6,2,'A']],{mode:'num',list:true,cell:7.6});
+ P.push(A('Gåtor i skogen','Räkna rutorna och skriv svaret.',K8.html,['Åt höger: '+K8.key('A')+' · Nedåt: '+K8.key('D')]));
+ const K12=kryss([['CYKEL','bike',1,2,'D'],['KYRKA','church',2,1,'A'],['BANAN','banana',1,5,'D'],['BIL','car',1,5,'A'],['LÖV','leaf_autumn',1,7,'D'],['ANKA','swim_duck',5,4,'A'],['KO','cow',5,6,'D']],{secret:[[1,6],[3,7],[5,4],[2,3]],cell:9.1});
+ P.push(A('Sista korsordet',ASK,K12.html,['Åt höger: '+K12.key('A')+' · Nedåt: '+K12.key('D')+' · Hemligt ord: '+K12.word]));
  P.push(A('Mitt eget korsord','Rita en bild och en pil. Skriv ordet i rutorna. Låt någon annan lösa korsordet!',`<div class="pb-own" style="flex:1;display:flex;flex-direction:column;justify-content:center">${egetKryss(8,8)}</div>`));
  return {id:'s11',subj:'svenska',title:'Korsordsskogen',sub:'Bildkryss, ordsök, gåtor, motsatser',kick:'Korsord',level:4,facit:true,goal:'Jag kan lösa korsord och göra ett eget.',hello:'Hej! Otto här. I ett korsord korsar orden varandra och delar på en bokstav. Titta på bilden och räkna rutorna.',cover:{scene:'forest',pose:'owl',props:''},pages:P};
 }

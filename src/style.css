@@ -876,7 +876,7 @@ html.fam-on{overflow:hidden}
 .kcol h4 .karr{position:static; transform:none; width:3cqw; height:3cqw}
 .kcards{display:flex; flex-wrap:wrap; justify-content:center; gap:1.6cqw 2.4cqw; width:100%}
 .kclue{cursor:pointer}
-.kclue.pic{position:relative; display:inline-grid; place-items:center; padding:1.6cqw .6cqw .4cqw}
+.kclue.pic{position:relative; display:inline-grid; place-items:center; padding:3cqw .6cqw .2cqw}
 .kbadge{position:absolute; left:0; top:0; z-index:1; display:flex; align-items:center; gap:.3cqw; padding:.4cqw .9cqw .4cqw .5cqw; border-radius:99px; background:#fff; box-shadow:0 0 0 .3cqw var(--sc)}
 .kbadge .kn{font-size:2.6cqw}
 .kbadge .karr{position:static; transform:none; width:2.6cqw; height:2.6cqw}

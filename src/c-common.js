@@ -149,7 +149,7 @@ function kryss(words,{mode='pic',secret=[],given=null,cell=10.2,ask='Vem gömmer
  const word=secret.map(([r,c])=>L[r+','+c]).join('');
  const hid=secret.length?`<div class="ksecret"><p class="p"><b>${ask}</b>${secretHint}</p><div class="ksw">${[...word].map((ch,i)=>`<span class="kcell sec"><b>${i+1}</b>${box(ch,'txt kc')}</span>`).join('')}</div></div>`:'';
  return {html:`<div class="kwrap ${mode}">${grid}${clues}${hid}</div>`,word,words:words.map(x=>x[0]),
-  key:(d=>words.filter(x=>x[4]===d).map(x=>x[0]).join(', '))};
+  key:(d=>words.filter(x=>x[4]===d).map(x=>(mode==='num'?num[x[2]+','+x[3]]+' ':'')+x[0]).join(', '))};
 }
 /* Ordsök: rows = rader med bokstäver, words = [[ORD, ikon, rad, kolumn, 'A'|'D']]. Barnet trycker på (ringar in) orden. */
 function ordsok(rows,words,{cell=9.4}={}){const on=new Set();
