@@ -174,3 +174,15 @@ Hon flög över hav och berg i många dagar. Till slut såg hon den röda stugan
  P.push(A('Vad händer sen?','Ebba har gått ut utan paraply, och nu börjar det regna. Vad händer sen? Rita och berätta.',`<div style="flex:1;display:flex;flex-direction:column;gap:3cqw"><div class="storypic" style="width:64%">${scene('sc_regn')}</div><div class="draw"><span class="lab">Sen …</span></div>${freeLine(86,10)}</div>`));
  P.push(A('Skriv din egen berättelse','Hitta på en berättelse om djuren i skogen. Rita först, skriv sedan.',`<div style="flex:1;display:flex;flex-direction:column;gap:1.6cqw"><div class="draw" style="min-height:36cqw"><span class="lab">Min bild</span></div>${rep(4,()=>freeLine(86,10))}</div>`));
  return {id:'s7',subj:'svenska',title:'Små berättelser',sub:'Läsa och förstå',level:3,goal:'Jag kan läsa korta berättelser och svara på frågor.',hello:'Hej! Otto här. Jag har skrivit berättelser om mina vänner i skogen. Läs dem och svara på frågorna!',cover:{scene:'forest',pose:'owl',props:artIn('book',30,236,34)+artIn('squirrel',64,240,34)},pages:P}}
+
+/* ================= Korsord (provsida, 2026-10-29) ================= */
+function bookKT(){const P=[];
+ /* 6 rader × 7 kolumner, sex ord, fem korsningar. Inga bilder av Ebba, Otto, Ruben, Siri eller Ivar:
+    då kan barnet skriva namnet i stället för djuret. Varje bild har bara ett rimligt ord med rätt antal rutor.
+    Hemligt ord OTTO ur tre olika ord (SOL, TÄLT, GRODA), inte i följd. */
+ const K=kryss([['FISK','fish',1,1,'A'],['SOL','sun',1,3,'D'],['TÄLT','tent',3,1,'A'],['ÄGG','egg',3,2,'D'],['GRODA','frog',5,2,'A'],['MYRA','ant',2,6,'D']],
+  {secret:[[2,3],[3,4],[3,1],[5,4]]});
+ P.push(A('Ute i naturen','Vad är det på bilden? Skriv ordet där pilen pekar, en bokstav i varje ruta.',K.html,
+  ['Åt höger: FISK, TÄLT, GRODA · Nedåt: SOL, ÄGG, MYRA · Hemligt ord: '+K.word]));
+ return {id:'kt',subj:'svenska',title:'Korsord',sub:'Bildkryss med hemligt ord',kick:'Korsord',level:4,facit:true,goal:'Jag kan lösa ett korsord med bilder.',hello:'Hej! Otto här. I ett korsord korsar orden varandra, och där de möts delar de på en bokstav. Titta på bilden, räkna rutorna och skriv ordet.',cover:{scene:'forest',pose:'owl',props:''},pages:P};
+}

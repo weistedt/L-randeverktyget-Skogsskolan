@@ -348,3 +348,24 @@ $('stage').addEventListener('click',e=>{const g=e.target.closest('.fac-go');if(g
 $('stage').addEventListener('keydown',e=>{if(e.target.matches('.fac-in')&&e.key==='Enter'){e.preventDefault();facTry(e.target.closest('.fac-lock'))}},true);
 
 $('fit')&&$('fit').addEventListener('click',()=>{FIT=!FIT;try{localStorage.setItem('sk-fit',FIT?'1':'0')}catch(e){}if(R.b){flush&&flush();mountFlip(R.idx)}});
+
+/* ================= Bildkryss: en bokstav per ruta, vidare i ordets riktning ================= */
+let kDir='A',kLast=null;
+const kAt=(g,r,c)=>g&&g.querySelector(`.kcell[data-r="${r}"][data-c="${c}"] input`);
+const kRC=inp=>{const c=inp.parentNode;return [+c.dataset.r,+c.dataset.c]};
+function kHas(inp,d){const g=inp.closest('.kryss'),[r,c]=kRC(inp);return d==='A'?!!(kAt(g,r,c-1)||kAt(g,r,c+1)):!!(kAt(g,r-1,c)||kAt(g,r+1,c))}
+function kStep(inp,d,s){const g=inp.closest('.kryss'),[r,c]=kRC(inp);return d==='A'?kAt(g,r,c+s):kAt(g,r+s,c)}
+/* select() fokuserar rutan i Chrome, så bara om den fortfarande har fokus (annars studsar markören tillbaka) */
+const kSel=inp=>setTimeout(()=>{if(document.activeElement===inp)try{inp.select()}catch(e){}},0);
+function kGo(inp){if(!inp)return;inp.focus();kSel(inp)}
+document.addEventListener('focusin',e=>{const t=e.target;if(!t.matches||!t.matches('.kryss input'))return;
+ if(kLast&&kLast!==t&&kLast.closest('.kryss')===t.closest('.kryss')){const [r0,c0]=kRC(kLast),[r1,c1]=kRC(t);if(r0===r1&&Math.abs(c0-c1)===1)kDir='A';else if(c0===c1&&Math.abs(r0-r1)===1)kDir='D'}
+ if(!kHas(t,kDir))kDir=kDir==='A'?'D':'A';kLast=t;kSel(t)});
+/* fångas före det vanliga input-steget så att bara den senaste bokstaven sparas */
+document.addEventListener('input',e=>{const t=e.target;if(t.matches&&t.matches('.kcell input')&&t.value.length>1)t.value=t.value.slice(-1)},true);
+document.addEventListener('input',e=>{const t=e.target;if(!t.matches||!t.matches('.kryss input')||!t.value.trim())return;const nx=kStep(t,kDir,1);if(nx)kGo(nx)});
+document.addEventListener('keydown',e=>{const t=e.target;if(!t.matches||!t.matches('.kryss input'))return;
+ if(e.key==='Backspace'&&!t.value){const pv=kStep(t,kDir,-1);if(pv){e.preventDefault();kGo(pv)}}
+ const AR={ArrowRight:['A',1],ArrowLeft:['A',-1],ArrowDown:['D',1],ArrowUp:['D',-1]}[e.key];if(AR){const nx=kStep(t,AR[0],AR[1]);if(nx){e.preventDefault();kDir=AR[0];kGo(nx)}}});
+document.addEventListener('click',e=>{const p=e.target.closest&&e.target.closest('.kpic');if(!p)return;const g=p.closest('.kryss'),r=+p.dataset.r,c=+p.dataset.c;kDir=p.dataset.d;kLast=null;
+ /* alltid ordets första ruta: barnet skriver hela ordet, även bokstäver som redan finns där orden korsas */kGo(p.dataset.d==='A'?kAt(g,r,c+1):kAt(g,r+1,c))});

@@ -108,3 +108,24 @@ const artSvgW=(n,w,flip=false)=>`<svg class="ic" viewBox="0 0 100 100" style="wi
 const arrowSvg=(deg,w=14)=>`<svg class="ic" viewBox="0 0 100 60" style="width:${w}cqw" aria-hidden="true"><g transform="rotate(${deg} 50 30)"><path d="M10 30 H74" stroke="var(--sc)" stroke-width="11" stroke-linecap="round"/><path d="M60 10 L88 30 L60 50Z" fill="var(--sc)" stroke="var(--sc)" stroke-width="6" stroke-linejoin="round"/></g></svg>`;
 /* paket i olika färger (för vågen) */
 [['pkg_r','#C9574B','#A9463D'],['pkg_b','#5B86B4','#4A6F98'],['pkg_y','#E2B64A','#C49A33']].forEach(([k,c,d])=>{if(typeof ICONIMG!=='undefined'&&ICONIMG[k])return;ART[k]=`<rect x="16" y="38" width="68" height="52" rx="4" fill="${c}"/><rect x="12" y="28" width="76" height="14" rx="3" fill="${d}"/><rect x="45" y="28" width="10" height="62" fill="#F6E6C4"/><path d="M50 28 C42 14 28 14 33 23 C37 29 46 29 50 28 C54 29 63 29 67 23 C72 14 58 14 50 28Z" fill="#F6E6C4"/>`});
+
+/* ================= Bildkryss (korsord med bilder) =================
+   words: [[ORD, ikon, rad, kolumn, 'A'|'D']] där rad/kolumn är ordets FÖRSTA bokstav.
+   Bilden står i rutan före ordet (till vänster för 'A' = åt höger, ovanför för 'D' = nedåt),
+   med en pil in mot ordet. secret: [[rad, kolumn], …] i det hemliga ordets ordning.
+   Rutorna är vanliga svarsrutor (box), en bokstav i varje; korsande rutor delas. */
+function kryss(words,{secret=[],cell=10.2,ask='Vem gömmer sig?'}={}){
+ const L={},PIC=[];let H=0,W=0;
+ words.forEach(([w,icon,r,c,d])=>{const dr=d==='D'?1:0,dc=d==='D'?0:1;[...w].forEach((ch,i)=>{const k=(r+dr*i)+','+(c+dc*i);if(L[k]&&L[k]!==ch)throw new Error('kryss: krock i '+k);L[k]=ch;H=Math.max(H,r+dr*i+1);W=Math.max(W,c+dc*i+1)});PIC.push([icon,r-dr,c-dc,d,w])});
+ const sec={};secret.forEach(([r,c],i)=>sec[r+','+c]=i+1);
+ const arrow=d=>`<svg class="karr ${d==='D'?'down':'right'}" viewBox="0 0 20 20" aria-hidden="true"><path d="${d==='D'?'M4 7l6 7 6-7z':'M7 4l7 6-7 6z'}"/></svg>`;
+ let g='';
+ /* Bilden får växa utåt (bort från ordet) där grannrutorna är tomma, annars stannar den i sin ruta */
+ const used=k=>L[k]||PIC.some(([,pr,pc])=>pr+','+pc===k);
+ PIC.forEach(([icon,r,c,d,w])=>{const out=d==='D'?[[r-1,c],[r,c-1],[r,c+1]]:[[r,c-1],[r-1,c],[r+1,c]];const big=out.every(([a,b])=>!used(a+','+b));g+=`<span class="kpic ${d}${big?' big':''}" data-r="${r}" data-c="${c}" data-d="${d}" style="grid-area:${r+1}/${c+1}" aria-label="${w.length} bokstäver ${d==='D'?'nedåt':'åt höger'}">${art(icon,cell)}${arrow(d)}</span>`});
+ Object.entries(L).forEach(([k,ch])=>{const [r,c]=k.split(',').map(Number),n=sec[k];g+=`<span class="kcell${n?' sec':''}" data-r="${r}" data-c="${c}" style="grid-area:${r+1}/${c+1}">${box(ch,'txt kc')}${n?`<b>${n}</b>`:''}</span>`});
+ const word=secret.map(([r,c])=>L[r+','+c]).join('');
+ const grid=`<div class="kryss" style="--kc:${cell}cqw;grid-template-columns:repeat(${W},var(--kc));grid-template-rows:repeat(${H},var(--kc))">${g}</div>`;
+ const hid=secret.length?`<div class="ksecret"><p class="p"><b>${ask}</b>Läs de gula rutorna i ordning.</p><div class="ksw">${[...word].map((ch,i)=>`<span class="kcell sec"><b>${i+1}</b>${box(ch,'txt kc')}</span>`).join('')}</div></div>`:'';
+ return {html:`<div class="kwrap">${grid}${hid}</div>`,word,words:words.map(x=>x[0])};
+}
