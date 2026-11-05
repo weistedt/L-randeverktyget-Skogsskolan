@@ -129,16 +129,16 @@ function inAppBrowser(){return /FBAN|FBAV|FB_IAB|FBIOS|FB4A|Messenger|Instagram|
 function escIOS(){return /iPad|iPhone|iPod/.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
 function escAndroid(){return /Android/.test(navigator.userAgent||'')}
 function escOpen(){const el=$('esc');if(!el)return;const ios=escIOS(),and=escAndroid();
- $('escGo').hidden=!ios&&!and;$('escCopy').textContent='Kopiera länken';$('escUrl').hidden=true;
+ const go=$('escGo');go.hidden=!ios&&!and;go.href=escTarget();$('escCopy').textContent='Kopiera länken';$('escUrl').hidden=true;
  $('escHint').textContent=`${ios||and?'Hände inget? ':''}Tryck på de tre prickarna i appen och välj att öppna ${ios?'i Safari':'i webbläsaren'}, eller klistra in länken i webbläsaren. Det du har gjort här följer inte med dit.`;
+ if(location.hostname.includes('--pr')&&!$('escTest')){const d=document.createElement('p');d.id='escTest';d.className='esc-hint';const x=location.href.replace(/^https:/,'x-safari-https:'),c=location.href.replace(/^https:/,'googlechromes:');d.innerHTML=`Test: <button class="fam-link" onclick="location.href='${x}'">B Safari via script</button> · <a class="fam-link" href="${c}">C Chrome</a>`;$('escUrl').after(d)}
  el.hidden=false;if(!el.dataset.on){el.dataset.on=1;el.addEventListener('click',escClick)}}
-function escClick(e){const t=e.target.closest&&e.target.closest('button');if(!t)return;
+function escClick(e){const t=e.target.closest&&e.target.closest('a,button');if(!t)return;
  if(t.id==='escClose'){$('esc').hidden=true;return}
  if(t.id==='escCopy'){escCopy();return}
- if(t.id==='escGo')escGo()}
-function escGo(){const u=location.href;
- if(escIOS()){const x=u.replace(/^https:/,'x-safari-https:');let w=null;try{w=window.open(x,'_blank')}catch(e){}if(!w)location.href=x}
- else if(escAndroid())location.href='intent:'+u.split('#')[0]+'#Intent;end'}
+ /* Facebook-appen på iPhone släpper bara schemat via window.open; i Messenger ger det en tom sida, där räcker den vanliga länken */
+ if(t.id==='escGo'&&escIOS()&&/FBIOS/.test(navigator.userAgent||'')){e.preventDefault();window.open(t.href,'_blank')}}
+function escTarget(){const u=location.href;return escIOS()?u.replace(/^https:/,'x-safari-https:'):'intent:'+u.split('#')[0]+'#Intent;end'}
 async function escCopy(){const u=location.href;let ok=false;
  try{await navigator.clipboard.writeText(u);ok=true}catch(e){
   try{const a=document.createElement('textarea');a.value=u;a.setAttribute('readonly','');a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();ok=document.execCommand('copy');a.remove()}catch(_){}}
