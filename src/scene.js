@@ -15,7 +15,7 @@ function rdSky(){const shelf=$('shelf');if(!shelf)return;shelf.querySelectorAll(
  const I=typeof ICONIMG!=='undefined'?ICONIMG:{};const W=shelf.clientWidth;if(!W)return;const mob=W<700;
  const sr=shelf.getBoundingClientRect(),rel=e=>{const q=e.getBoundingClientRect();return{l:q.left-sr.left,t:q.top-sr.top,r:q.right-sr.left,b:q.bottom-sr.top}};
  // Hinder: text får aldrig skymmas; omslag får skymma motivet till en del (det ser ut att ligga bakom boken).
- const txt=[...shelf.querySelectorAll('.subj-h>*,.bk-meta,.progress,.bbi,.faq-h,.faq details,#resume>*')].map(rel);
+ const txt=[...shelf.querySelectorAll('.subj-h>*,.bk-meta,.progress,.bbi,.faq-h,.faq details,.om,#resume>*')].map(rel);
  const cov=[...shelf.querySelectorAll('.bk-cv')].map(rel);
  const ov=(a,b)=>Math.max(0,Math.min(a.r,b.r)-Math.max(a.l,b.l))*Math.max(0,Math.min(a.b,b.b)-Math.max(a.t,b.t));
  const secs=[...document.querySelectorAll('#subjects .subj'),document.querySelector('.shelf .bbi'),document.querySelector('.shelf .faq')].filter(Boolean);

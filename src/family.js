@@ -25,7 +25,7 @@ function famSeedLegacy(){const f=state.fam;if(f.kids.length)return false;
  const t=Date.now();ids.forEach(id=>f.kids.push({id,name:id[0].toUpperCase()+id.slice(1),born:null,adj:0,t}));f.t=t;famDirty=true;return true}
 function famInit(){if(!state.fam||!Array.isArray(state.fam.kids))state.fam={kids:[],t:0};famSeedLegacy();famSetKids();
  document.addEventListener('click',famClick);
- const fm=$('fam');if(fm){fm.addEventListener('input',famInput);fm.addEventListener('change',famInput)}}
+ const fm=$('fam');if(fm){fm.addEventListener('input',famInput);fm.addEventListener('change',famInput)}omInit()}
 /* efter start: ett tomt register öppnar "Vem ska läsa?" (inte vid utskrift eller när en bok öppnas direkt) */
 function famBoot(){if(!famReal().length&&!document.documentElement.classList.contains('print-mode'))famOpen('first')}
 function famReal(){return KIDS.filter(k=>k!==FAM_FALLBACK)}
@@ -99,13 +99,14 @@ function famCommit(){const d=famDraft;if(!d)return;if(!d.kids.some(k=>!k.hid)){d
  toast(first?`Välkommen${KIDS.length===1?', '+KIDS[0].name:''}! Böckerna som passar är märkta.`:'Familjen är sparad.')}
 
 /* ---------- Konto: var sparas allt? ---------- */
+const FAM_G='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4 5.6-4z"/></svg>';
 function famAcctRender(){const el=$('famAcct');if(!el)return;let h='';
  if(ACCT.kind==='claude')h=`<p>Sparas i ditt claude.ai-konto.</p>`;
  else if(ACCT.kind==='google')h=`<p>Sparas på ${ACCT.email?famEsc(ACCT.email):'ditt Google-konto'} och finns på alla enheter där du loggar in. <button class="fam-link" id="famOut">Logga ut</button></p>`;
- else if(ACCT.kind==='google-out')h=`<p>Sparas bara i den här webbläsaren.</p><button class="fam-google" id="famIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4 5.6-4z"/></svg>Logga in med Google och spara på alla enheter</button>`;
+ else if(ACCT.kind==='google-out')h=`<p>Sparas bara i den här webbläsaren.</p><button class="fam-google" id="famIn">${FAM_G}Logga in med Google och spara på alla enheter</button>`;
  else h=`<p>Sparas i den här webbläsaren.</p>`;
  el.innerHTML=h}
-function acctSet(kind,email){ACCT={kind,email:email||''};famAcctRender();const c=$('acctChip');if(c){c.hidden=kind!=='google-out'}}
+function acctSet(kind,email){ACCT={kind,email:email||''};famAcctRender();msgRender();const c=$('acctChip');if(c){c.hidden=kind!=='google-out'}}
 
 /* ---------- Firebase (egen webbplats) ---------- */
 var FB=null;
@@ -144,3 +145,35 @@ async function acctSignOut(){if(!FB)return;flush();await cloudSettle();
  let pend=false;try{pend=dirty.size>0||!!famDirty||!!pushing}catch(e){}if(pend&&!confirm('Allt är inte sparat i molnet ännu. Logga ut ändå? Det som inte hunnit sparas finns kvar som en kopia i den här webbläsaren.'))return;
  try{if(pend)localStorage.setItem(KEY+'-bak-'+Date.now(),localStorage.getItem(KEY)||'')}catch(e){}
  try{await FB.auth.signOut()}catch(e){}try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
+
+/* ---------- Om Skogsskolan och meddelanden ---------- */
+/* Meddelanden kräver Google-inloggning (mindre skräp, och avsändaren går att svara). De hamnar i samlingen meddelanden,
+   som inloggade bara kan skapa i och ingen kan läsa från appen (firestore.rules). Läses i Firebase-konsolen. */
+var msgType='bok',msgFrom='';
+const MSG_HINT={bok:'Vilken bok saknar du?',fel:'Vad är fel, och i vilken bok?',annat:'Skriv här'};
+function omInit(){if(typeof HEROIMG!=='undefined'&&HEROIMG.hero_brev){['heroOmArt','omArt'].forEach(id=>{const e=$(id);if(e)e.innerHTML=`<img src="${HEROIMG.hero_brev}" alt="" decoding="async">`})}
+ const h=$('heroOm');if(h)h.addEventListener('click',e=>{e.preventDefault();$('om').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+ const o=$('omMsg');if(o)o.addEventListener('click',()=>msgOpen('bok',''));
+ const f=$('flag');if(f)f.addEventListener('click',()=>msgOpen('fel',`${$('rtitle').textContent}, ${$('rcount').textContent}`));
+ const m=$('msg');if(m)m.addEventListener('click',msgClick);
+ const q=$('faqCopy');if(q)q.addEventListener('click',async e=>{e.preventDefault();try{await navigator.clipboard.writeText('https://skogsskolan-fc7d8.web.app');q.textContent='Länken är kopierad'}catch(_){q.textContent='Markera adressen ovan och kopiera'}});
+ document.querySelectorAll('.hs-me').forEach(e=>{if(typeof HEROIMG!=='undefined'&&HEROIMG.hero_brev)e.innerHTML=`<img src="${HEROIMG.hero_brev}" alt="">`})}
+function msgOpen(type,from){msgType=type;msgFrom=from;$('msgErr').hidden=true;msgRender();$('msg').hidden=false}
+function msgTypeSet(){document.querySelectorAll('[data-msg]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.msg===msgType?'true':'false'));$('msgText').placeholder=MSG_HINT[msgType];
+ const a=$('msgAbout');a.hidden=!msgFrom;a.textContent=msgFrom?'Gäller: '+msgFrom:''}
+function msgRender(){const g=$('msgGate'),f=$('msgForm'),s=$('msgSend');if(!g)return;const ok=!!FB&&ACCT.kind==='google';
+ f.hidden=!ok;s.hidden=!ok;g.hidden=ok;$('msgClose').textContent=ok?'Avbryt':'Stäng';
+ if(ok){msgTypeSet();return}
+ g.innerHTML=FB?`<p class="fam-sub">Logga in med Google så vet jag vem som skriver och kan svara dig.</p><div class="msg-in"><button class="fam-google" id="msgIn">${FAM_G}Logga in med Google</button></div>`:'<p class="fam-sub">Meddelanden skickas från webbplatsen skogsskolan-fc7d8.web.app.</p>'}
+function msgClick(e){const t=e.target.closest&&e.target.closest('button');if(!t)return;e.preventDefault();
+ if(t.id==='msgClose'){$('msg').hidden=true;return}
+ if(t.id==='msgIn'){acctSignIn();return}
+ if(t.id==='msgSend'){msgSend();return}
+ if(t.dataset.msg){msgType=t.dataset.msg;if(msgType!=='fel')msgFrom='';msgTypeSet()}}
+async function msgSend(){const x=$('msgText'),s=$('msgSend'),txt=x.value.trim();$('msgErr').hidden=true;if(txt.length<3){x.focus();return}
+ const u=FB&&FB.auth.currentUser;if(!u){msgRender();return}s.disabled=true;s.textContent='Skickar…';
+ try{if(navigator.onLine===false)throw new Error('offline');
+  await Promise.race([FB.db.collection('meddelanden').add({typ:msgType,text:txt,om:msgFrom.slice(0,120),uid:u.uid,email:u.email||'',t:firebase.firestore.FieldValue.serverTimestamp()}),new Promise((_,no)=>setTimeout(()=>no(new Error('timeout')),12000))]);
+  x.value='';msgFrom='';$('msg').hidden=true;toast('Tack! Meddelandet är skickat.')}
+ catch(e){$('msgErr').hidden=false}
+ s.disabled=false;s.textContent='Skicka'}
