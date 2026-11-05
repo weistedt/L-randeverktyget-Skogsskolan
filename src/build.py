@@ -71,7 +71,12 @@ html = head + FONTS + '\n<style>\n' + css + '\n</style>\n' + (S / 'body.html').r
 WEB = DIST / 'web'; WEB.mkdir(exist_ok=True)
 (WEB / 'index.html').write_text("<!doctype html><html lang='sv'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'>"
     "<meta name='description' content='Lärböcker i matte, svenska, engelska och geografi för barn 4–8 år – att bläddra i, skriva i och skriva ut.'>"
-    "<meta name='theme-color' content='#F1F3EF'></head><body>" + html + "</body></html>")
+    "<meta name='theme-color' content='#F1F3EF'><meta name='apple-mobile-web-app-title' content='Skogsskolan'>"
+    "<link rel='apple-touch-icon' href='/apple-touch-icon.png'><link rel='manifest' href='/manifest.webmanifest'></head><body>" + html + "</body></html>")
+# Hemskärmen: ikon och namn. Ingen webbapp-läge (display: browser), Google-inloggning kräver en riktig webbläsare.
+(WEB / 'apple-touch-icon.png').write_bytes((S / 'img' / 'touch-icon.png').read_bytes())
+(WEB / 'manifest.webmanifest').write_text(json.dumps({'name': 'Skogsskolan', 'short_name': 'Skogsskolan', 'start_url': '/', 'display': 'browser',
+    'icons': [{'src': '/apple-touch-icon.png', 'sizes': '192x192', 'type': 'image/png'}]}))
 legacy = pathlib.Path('/home/claude/ekollon.html')          # publiceringsväg i Claude-sessionen
 if legacy.parent.exists():
     legacy.write_text(html)

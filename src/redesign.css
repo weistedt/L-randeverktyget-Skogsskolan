@@ -133,3 +133,67 @@ html.rd .bb-peek>span{background:none; box-shadow:none; color:#fff; text-shadow:
 /* Omslagets nivårad: text på omslaget i stället för vit bricka */
 html.rd .cover .cv-lv{background:none!important; box-shadow:none!important; padding-left:0!important}
 html.rd .cover.ph3d.dk .cv-lv{color:#FBF6EC; text-shadow:0 .2cqw 1.6cqw rgba(10,18,24,.55)}
+
+/* ---------- "Skapad av föräldrar": länken i heron, infodelen längst ner och meddelanderutan ---------- */
+.hero-om{display:inline-flex; align-items:center; gap:7px; width:max-content; max-width:calc(100vw - 32px); margin-top:14px; color:var(--fg); text-decoration:none; font:600 clamp(.82rem,3.6vw,1rem)/1.2 var(--f-disp); font-variation-settings:"SOFT" 100,"WONK" 1; white-space:nowrap; transition:transform .25s}
+.hero-om:hover{transform:translateY(-2px)}
+.hero-om:hover .hero-om-t{text-decoration:underline; text-underline-offset:.2em}
+@media (max-width:700px){html.rd .hero-om{position:absolute; left:max(16px,env(safe-area-inset-left,0px)); top:100%; margin-top:6px; filter:drop-shadow(0 0 5px var(--bg)) drop-shadow(0 0 2px var(--bg))}}
+.hero-om-art{flex:none; width:20px; height:38px; display:block}
+.hero-om-art img{display:block; height:100%; width:auto; transform-origin:50% 100%; animation:omBob 3.6s ease-in-out infinite}
+.hero-om-go{flex:none; width:16px; height:16px; color:var(--accent); animation:omNudge 2s ease-in-out infinite}
+.hero-om .w{display:inline-block; opacity:0; transform:translateY(.55em); animation:omIn .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:calc(.3s + var(--i)*.1s)}
+.hero-om .om-glow{background:linear-gradient(100deg,var(--fg) 30%,var(--accent) 50%,var(--fg) 70%); background-size:260% 100%; background-position:100% 0; -webkit-background-clip:text; background-clip:text; color:transparent; animation:omIn .7s cubic-bezier(.2,.8,.2,1) forwards,omGlow 6s 1.4s ease-in-out infinite; animation-delay:calc(.3s + var(--i)*.1s),1.4s}
+@keyframes omIn{to{opacity:1; transform:none}}
+@keyframes omBob{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-2px)}}
+@keyframes omNudge{0%,100%{transform:none}50%{transform:translateY(3px)}}
+@keyframes omGlow{0%,55%{background-position:100% 0}85%,100%{background-position:0 0}}
+@media (prefers-reduced-motion:reduce){.hero-om-art img,.hero-om-go,.hero-om .om-glow{animation:none}.hero-om .w{animation:none; opacity:1; transform:none}.hero-om .om-glow{background:none; color:inherit}}
+.om{display:grid; grid-template-columns:minmax(0,.55fr) minmax(0,1.45fr); align-items:center; gap:24px 44px; margin:44px 0 40px; padding:36px 44px; border-radius:28px; scroll-margin-top:20px; background:var(--glass); backdrop-filter:blur(16px) saturate(1.1); -webkit-backdrop-filter:blur(16px) saturate(1.1); box-shadow:inset 0 0 0 1px var(--glass-line)}
+.om-art{display:grid; place-items:center}
+.om-art img{display:block; height:250px; width:auto; transform-origin:50% 100%; animation:omBob 4.5s ease-in-out infinite}
+.om h2{font:600 clamp(1.7rem,3.4vw,2.4rem)/1.04 var(--f-disp); font-variation-settings:"SOFT" 100,"WONK" 1; margin:0 0 14px; letter-spacing:-.015em}
+.om p{margin:0 0 12px; color:var(--fg); line-height:1.55; max-width:54ch}
+.om .bbi-go{margin-top:10px}
+@media (prefers-reduced-motion:reduce){.om-art img{animation:none}}
+@media (max-width:760px){.om{grid-template-columns:1fr; padding:26px 20px 28px; text-align:left}.om-art img{height:170px}.om .bbi-go{width:100%; justify-content:center}}
+@media print{.om,.hero-om{display:none!important}}
+.msg-types{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:16px 0 14px}
+.msg-types button{border:1px solid color-mix(in srgb,var(--line-ui) 80%,transparent); border-radius:999px; background:transparent; color:var(--fg); padding:8px 14px; font-weight:700; font-size:.9rem}
+.msg-types button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--card)}
+.msg-about{margin:0 0 10px; text-align:center; font-size:.88rem; color:var(--fg-soft)}
+.msg-about[hidden],.msg-err[hidden]{display:none}
+.msg-lbl{display:block; margin-bottom:6px; font-weight:700; font-size:.9rem}
+.msg textarea{display:block; width:100%; box-sizing:border-box; resize:vertical; border:1px solid var(--line-ui); border-radius:14px; background:var(--card); color:var(--fg); padding:12px 14px; font:400 16px/1.45 var(--f-read); outline:none}
+.msg textarea:focus{border-color:var(--accent)}
+.msg .fam-body{margin-top:0; padding-top:26px}
+.msg .fam-foot{margin-top:18px}
+.msg-in{text-align:center}
+.msg-err{margin:10px 0 0; text-align:center; font-weight:700; font-size:.9rem; color:#A63F38}
+.flagbtn{padding:9px 10px!important}
+/* hemskärmsguiden: tecknade telefoner, inga skärmbilder */
+.hs{list-style:none; margin:12px 0; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 12px; max-width:320px; margin-inline:auto}
+.hs li{min-width:0; display:flex; flex-direction:column; align-items:center; gap:8px}
+.hs-ph{position:relative; display:flex; flex-direction:column; width:112px; height:190px; box-sizing:border-box; padding:7px; border-radius:20px; overflow:hidden; background:#22302B; box-shadow:0 10px 20px -14px rgba(20,40,30,.6)}
+.hs-page{flex:1; min-height:0; display:grid; place-items:center; border-radius:13px 13px 0 0; background:linear-gradient(180deg,#DDEAD6,#BFD6B4); color:#22302B; font:600 .72rem var(--f-disp)}
+.hs-dim{filter:brightness(.72)}
+.hs-bar{display:flex; align-items:center; gap:5px; height:30px; padding:0 6px; border-radius:0 0 13px 13px; background:#F4F2EA; color:#22302B}
+.hs-addr{flex:1; min-width:0; overflow:hidden; font-size:.5rem; line-height:1.9; text-align:center; border-radius:7px; background:#E2E2DA}
+.hs-hit{flex:none; display:grid; place-items:center; width:21px; height:21px; border-radius:50%; color:var(--accent); animation:hsRing 1.8s ease-out infinite}
+.hs-hit svg{width:15px; height:15px}
+.hs-sheet{position:absolute; left:7px; right:7px; bottom:7px; display:flex; flex-direction:column; padding:7px 6px; gap:4px; border-radius:13px; background:#F4F2EA; color:#22302B}
+.hs-row{display:flex; align-items:center; gap:4px; min-height:19px; padding:2px 5px; border-radius:6px; background:#fff; font-size:.55rem; line-height:1.1}
+.hs-row svg{flex:none; width:12px; height:12px}
+.hs-on{font-weight:700; color:var(--accent); animation:hsRing 1.8s ease-out infinite}
+.hs-down{align-self:center; width:9px; height:9px; margin:2px 0 3px; border-right:2px solid var(--accent); border-bottom:2px solid var(--accent); transform:rotate(45deg); animation:hsDown 1.4s ease-in-out infinite}
+.hs-home{background:linear-gradient(180deg,#5E8FB0,#9CC1A4)}
+.hs-apps{display:grid; grid-template-columns:repeat(3,1fr); gap:9px; padding:14px 7px}
+.hs-apps i{aspect-ratio:1; border-radius:7px; background:rgba(255,255,255,.45)}
+.hs-me{display:grid; place-items:end center; overflow:hidden; background:#E7EFE0!important; animation:hsPop 2.4s ease-in-out infinite}
+.hs-me img{display:block; width:58%; height:auto}
+.hs-t{font-size:.84rem; line-height:1.35; text-align:center}
+@keyframes hsRing{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}100%{box-shadow:0 0 0 8px transparent}}
+@keyframes hsDown{0%,100%{transform:rotate(45deg)}50%{transform:translate(0,3px) rotate(45deg)}}
+@keyframes hsPop{0%,100%{transform:none}50%{transform:scale(1.1)}}
+@media (prefers-reduced-motion:reduce){.hs-hit,.hs-on,.hs-down,.hs-me{animation:none}}
+.faq .faq-a button{white-space:nowrap}

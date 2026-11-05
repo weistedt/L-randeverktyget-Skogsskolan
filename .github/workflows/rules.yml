@@ -1,0 +1,26 @@
+# Publicerar databasreglerna (firestore.rules) när de ändras på main.
+# Tjänstekontot behöver rollen Firebase Rules Admin.
+name: Publicera databasregler
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['firestore.rules']
+permissions:
+  contents: read
+jobs:
+  rules:
+    if: ${{ vars.FIREBASE_PROJECT_ID != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Publicera reglerna
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx -y firebase-tools@13 deploy --only firestore:rules --project "${{ vars.FIREBASE_PROJECT_ID }}" --non-interactive
