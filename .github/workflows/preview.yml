@@ -1,0 +1,29 @@
+# Testlänk för en pull request: bara appen, utan tryckfilerna. Firebase ger en egen adress som slutar gälla efter 7 dagar.
+# Google-inloggning fungerar bara på den riktiga adressen; testadressen är inte godkänd i Firebase Authentication.
+name: Testlänk
+on:
+  pull_request:
+    paths: ['src/**', 'assets/**', 'firebase.json', '.github/workflows/preview.yml']
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+jobs:
+  preview:
+    if: ${{ vars.FIREBASE_PROJECT_ID != '' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Bygg appen
+        run: |
+          pip install pillow
+          python src/build.py
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          expires: 7d

@@ -121,8 +121,23 @@ async function fbInit(){if(typeof FIREBASE_CONFIG==='undefined'||!FIREBASE_CONFI
   acctSet('google',u.email);await cloudStart(FB.db,u.uid)});
  try{await FB.auth.getRedirectResult()}catch(e){}
  return true}
-async function acctSignIn(){if(!FB)return;const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+async function acctSignIn(){if(!FB)return;if(inAppBrowser()){escOpen();return}const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
  try{await FB.auth.signInWithPopup(p)}catch(e){const c=e&&e.code||'';if(/popup-blocked|operation-not-supported/.test(c)){try{await FB.auth.signInWithRedirect(p)}catch(_){toast('Inloggningen gick inte. Försök igen.')}}else if(!/popup-closed|cancelled-popup/.test(c))toast('Inloggningen gick inte. Försök igen.')}}
+/* Messenger, Facebook och andra appars inbyggda webbläsare: Google spärrar inloggningen där (403 disallowed_useragent).
+   En sida kan inte ta sig ut ur Messenger: x-safari-https och googlechromes provades på riktig iPhone 2026-11 utan resultat
+   (window.open och vanlig länk gav en vit sida). Därför bara kopiera-knapp och instruktion. */
+function inAppBrowser(){return /FBAN|FBAV|FB_IAB|FBIOS|FB4A|Messenger|Instagram|; wv\)/i.test(navigator.userAgent||'')}
+function escOpen(){const el=$('esc');if(!el)return;const ios=/iPad|iPhone|iPod/.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ $('escCopy').textContent='Kopiera länken';$('escUrl').hidden=true;
+ $('escHint').textContent=`Klistra in länken i ${ios?'Safari':'webbläsaren'}, eller tryck på de tre prickarna i appen och välj att öppna den där. Det du har gjort här följer inte med dit.`;
+ el.hidden=false;if(!el.dataset.on){el.dataset.on=1;el.addEventListener('click',escClick)}}
+function escClick(e){const t=e.target.closest&&e.target.closest('button');if(!t)return;
+ if(t.id==='escClose'){$('esc').hidden=true;return}
+ if(t.id==='escCopy')escCopy()}
+async function escCopy(){const u=location.href;let ok=false;
+ try{await navigator.clipboard.writeText(u);ok=true}catch(e){
+  try{const a=document.createElement('textarea');a.value=u;a.setAttribute('readonly','');a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();ok=document.execCommand('copy');a.remove()}catch(_){}}
+ if(ok){$('escCopy').textContent='Länken är kopierad'}else{const el=$('escUrl');el.textContent=u;el.hidden=false}}
 /* utloggning: skicka det sista till molnet, logga ut och töm den här enheten (allt finns kvar i kontot) */
 async function acctSignOut(){if(!FB)return;flush();await cloudSettle();
  /* hann inte allt upp till molnet (inget nät) frågar vi först, och sparar en kopia innan något tas bort */

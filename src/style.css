@@ -842,6 +842,13 @@ html.fam-on{overflow:hidden}
 .fam-acct p{margin:0 0 10px}
 .fam-google{display:inline-flex; align-items:center; gap:10px; border:1px solid color-mix(in srgb,var(--line-ui) 80%,transparent); background:var(--card); color:var(--fg); border-radius:12px; padding:10px 16px; font-weight:700; font-size:.9rem}
 .fam-google svg{width:18px; height:18px; flex:none}
+/* inloggning går inte i Messenger & co: Google spärrar inbyggda webbläsare */
+.esc{z-index:70}
+.esc .fam-body{margin-top:0; padding-top:26px}
+.esc .fam-foot{margin-top:0}
+.esc-hint{margin:16px 0 0; text-align:center; font-size:.86rem; line-height:1.5; color:var(--fg-soft)}
+.esc-url{margin:10px 0 0; text-align:center; font-size:.86rem; overflow-wrap:anywhere; user-select:all; -webkit-user-select:all; color:var(--fg)}
+.esc-url[hidden]{display:none}
 .fam-link{border:0; background:none; padding:0; color:var(--accent); font-weight:700; text-decoration:underline; text-underline-offset:3px}
 @media (max-width:460px){.fam{padding-left:12px; padding-right:12px}.fam-body{padding:0 20px 22px; margin-top:-24px}.fam-card h2{font-size:1.8rem}.fam-r1{gap:10px}.fam-card::before{inset:-8px; filter:blur(16px); border-radius:44px}}
 @media print{.fam{display:none!important}}
