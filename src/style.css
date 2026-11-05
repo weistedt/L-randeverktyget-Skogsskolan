@@ -846,9 +846,6 @@ html.fam-on{overflow:hidden}
 .esc{z-index:70}
 .esc .fam-body{margin-top:0; padding-top:26px}
 .esc .fam-foot{margin-top:0}
-.esc-go{display:block; box-sizing:border-box; text-align:center; text-decoration:none}
-.esc-go[hidden]{display:none}
-.esc-copy{width:100%; border:1px solid color-mix(in srgb,var(--line-ui) 80%,transparent); border-radius:16px; padding:13px 22px; background:var(--card); color:var(--fg); font-weight:700}
 .esc-hint{margin:16px 0 0; text-align:center; font-size:.86rem; line-height:1.5; color:var(--fg-soft)}
 .esc-url{margin:10px 0 0; text-align:center; font-size:.86rem; overflow-wrap:anywhere; user-select:all; -webkit-user-select:all; color:var(--fg)}
 .esc-url[hidden]{display:none}

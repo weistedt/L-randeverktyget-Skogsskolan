@@ -124,21 +124,16 @@ async function fbInit(){if(typeof FIREBASE_CONFIG==='undefined'||!FIREBASE_CONFI
 async function acctSignIn(){if(!FB)return;if(inAppBrowser()){escOpen();return}const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
  try{await FB.auth.signInWithPopup(p)}catch(e){const c=e&&e.code||'';if(/popup-blocked|operation-not-supported/.test(c)){try{await FB.auth.signInWithRedirect(p)}catch(_){toast('Inloggningen gick inte. Försök igen.')}}else if(!/popup-closed|cancelled-popup/.test(c))toast('Inloggningen gick inte. Försök igen.')}}
 /* Messenger, Facebook och andra appars inbyggda webbläsare: Google spärrar inloggningen där (403 disallowed_useragent).
-   Sidan kan inte tvinga fram en extern webbläsare, bara försöka. Därför finns alltid kopiera-knappen och instruktionen kvar. */
+   En sida kan inte ta sig ut ur Messenger: x-safari-https och googlechromes provades på riktig iPhone 2026-11 utan resultat
+   (window.open och vanlig länk gav en vit sida). Därför bara kopiera-knapp och instruktion. */
 function inAppBrowser(){return /FBAN|FBAV|FB_IAB|FBIOS|FB4A|Messenger|Instagram|; wv\)/i.test(navigator.userAgent||'')}
-function escIOS(){return /iPad|iPhone|iPod/.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
-function escAndroid(){return /Android/.test(navigator.userAgent||'')}
-function escOpen(){const el=$('esc');if(!el)return;const ios=escIOS(),and=escAndroid();
- const go=$('escGo');go.hidden=!ios&&!and;go.href=escTarget();$('escCopy').textContent='Kopiera länken';$('escUrl').hidden=true;
- $('escHint').textContent=`${ios||and?'Hände inget? ':''}Tryck på de tre prickarna i appen och välj att öppna ${ios?'i Safari':'i webbläsaren'}, eller klistra in länken i webbläsaren. Det du har gjort här följer inte med dit.`;
- if(location.hostname.includes('--pr')&&!$('escTest')){const d=document.createElement('p');d.id='escTest';d.className='esc-hint';const x=location.href.replace(/^https:/,'x-safari-https:'),c=location.href.replace(/^https:/,'googlechromes:');d.innerHTML=`Test: <button class="fam-link" onclick="location.href='${x}'">B Safari via script</button> · <a class="fam-link" href="${c}">C Chrome</a>`;$('escUrl').after(d)}
+function escOpen(){const el=$('esc');if(!el)return;const ios=/iPad|iPhone|iPod/.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ $('escCopy').textContent='Kopiera länken';$('escUrl').hidden=true;
+ $('escHint').textContent=`Klistra in länken i ${ios?'Safari':'webbläsaren'}, eller tryck på de tre prickarna i appen och välj att öppna den där. Det du har gjort här följer inte med dit.`;
  el.hidden=false;if(!el.dataset.on){el.dataset.on=1;el.addEventListener('click',escClick)}}
-function escClick(e){const t=e.target.closest&&e.target.closest('a,button');if(!t)return;
+function escClick(e){const t=e.target.closest&&e.target.closest('button');if(!t)return;
  if(t.id==='escClose'){$('esc').hidden=true;return}
- if(t.id==='escCopy'){escCopy();return}
- /* Facebook-appen på iPhone släpper bara schemat via window.open; i Messenger ger det en tom sida, där räcker den vanliga länken */
- if(t.id==='escGo'&&escIOS()&&/FBIOS/.test(navigator.userAgent||'')){e.preventDefault();window.open(t.href,'_blank')}}
-function escTarget(){const u=location.href;return escIOS()?u.replace(/^https:/,'x-safari-https:'):'intent:'+u.split('#')[0]+'#Intent;end'}
+ if(t.id==='escCopy')escCopy()}
 async function escCopy(){const u=location.href;let ok=false;
  try{await navigator.clipboard.writeText(u);ok=true}catch(e){
   try{const a=document.createElement('textarea');a.value=u;a.setAttribute('readonly','');a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();ok=document.execCommand('copy');a.remove()}catch(_){}}
