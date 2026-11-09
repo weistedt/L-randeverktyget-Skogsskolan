@@ -677,6 +677,21 @@ input.tline.no{border-bottom-color:#D9893B!important}
 .bb-pick-l .paws svg{width:11px; height:11px}
 .bb-name{width:100%; box-sizing:border-box; border:1.5px solid var(--line-ui); background:var(--bg); color:var(--fg); border-radius:14px; padding:13px 16px; font:600 1.15rem var(--f-disp); font-variation-settings:"SOFT" 100; outline:none; transition:border-color .2s, box-shadow .2s}
 .bb-name:focus{border-color:var(--sc); box-shadow:0 0 0 4px color-mix(in srgb,var(--sc) 18%,transparent)}
+.bb-pick-pr{display:flex; align-items:center; gap:3px; font-size:.72rem; font-weight:700; line-height:1.15; color:var(--sc)}
+.bb-pick-pr:empty{display:none}
+.bb-pick-pr svg{width:11px; height:11px; flex:none}
+.bb-prline{margin:10px 2px 0; font-size:.88rem; line-height:1.45; color:var(--fg-soft)}
+.bb-prline button{border:0; background:none; padding:0; font:inherit; font-weight:700; color:var(--sc); text-decoration:underline; text-underline-offset:2px}
+.bb-log{margin:0 0 22px; border-bottom:1px solid var(--line-ui); padding-bottom:12px}
+.bb-log summary{cursor:pointer; font:600 1.02rem var(--f-disp); font-variation-settings:"SOFT" 100}
+.bb-log summary span{font:500 .86rem var(--f-read); color:var(--fg-soft); margin-left:6px}
+.bb-log h4{margin:14px 0 4px; font:700 .9rem var(--f-read)}
+.bb-log ul{list-style:none; margin:0; padding:0}
+.bb-log li{display:flex; align-items:center; gap:10px; padding:5px 0; font-size:.92rem}
+.bb-log li span{flex:1; min-width:0}
+.bb-log li time{flex:none; font-size:.82rem; color:var(--fg-soft)}
+.bb-log li button{flex:none; width:28px; height:28px; border:0; background:none; padding:6px; color:var(--fg-soft); opacity:.7}
+.bb-log li button:hover{opacity:1}
 .bb-hint{margin:8px 2px 0; font-size:.84rem; color:var(--fg-soft); line-height:1.45}
 .bb-binds{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
 .bb-bind{position:relative; border:1.5px solid var(--line-ui); background:var(--bg); border-radius:18px; padding:14px 14px 15px; text-align:left; display:flex; flex-direction:column; gap:6px; color:var(--fg); transition:border-color .2s, background .2s, transform .2s}

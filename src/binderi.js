@@ -68,7 +68,7 @@ function bbRender(){const b=bbBook(),s=SUBJ[b.subj];const P=$('binderi');P.style
  $('bbStage').innerHTML=`<div class="mk-wrap">${bbMock(b,BB.bind,'mk-big')}<div class="bb-peek"><div id="bbPeek"></div><span>En sida ur boken</span></div></div>`;requestAnimationFrame(bbWarpAll);
  const subj=BB.subj||b.subj;
  $('bbSubj').innerHTML=Object.entries(SUBJ).map(([k,v])=>`<button class="bb-chip" data-subj="${k}" aria-pressed="${k===subj}" style="--sc:${v.color}">${v.name}</button>`).join('');
- $('bbShelf').innerHTML=BOOKS.filter(x=>x.subj===subj).map(x=>`<button class="bb-pick" data-bid="${x.id}" aria-pressed="${x.id===b.id}" aria-label="${bbEsc(x.title)}"><span class="bb-pick-cv">${coverPage(x)}</span><span class="bb-pick-t">${x.title}</span><span class="bb-pick-l">${paws(x.level)}</span></button>`).join('');
+ $('bbShelf').innerHTML=BOOKS.filter(x=>x.subj===subj).map(x=>`<button class="bb-pick" data-bid="${x.id}" aria-pressed="${x.id===b.id}" aria-label="${bbEsc(x.title)}"><span class="bb-pick-cv">${coverPage(x)}</span><span class="bb-pick-t">${x.title}</span><span class="bb-pick-l">${paws(x.level)}</span><span class="bb-pick-pr"></span></button>`).join('');
  $('bbBind').innerHTML=Object.entries(BINDS).map(([k,v])=>`<button class="bb-bind" data-bind="${k}" aria-pressed="${BB.bind===k}"><span class="bb-bind-ic">${BICON[k]}</span><span class="bb-bind-t"><b>${v.t}</b><em>${v.tag}</em></span><span class="bb-bind-d">${v.d}</span></button>`).join('');
  const p=bbPlan();const hasF=!p||p.nf>0;$('bbFacitRow').hidden=!hasF;
  $('bbFacit').innerHTML=[['in','I boken'],['sep','Eget blad'],['none','Utan facit']].map(([k,t])=>`<button data-facit="${k}" aria-pressed="${BB.facit===k}">${t}</button>`).join('');
@@ -78,7 +78,7 @@ function bbRender(){const b=bbBook(),s=SUBJ[b.subj];const P=$('binderi');P.style
  $('bbGuideTitle').textContent=BB.bind==='home'?'Så skriver du ut hemma':'Så beställer du hos ett tryckeri';
  {const ot=bbOrderText();$('bbOrder').textContent=ot;const gd=document.querySelector('.bb-guide');if(gd)gd.hidden=!ot}
  const ok=!!p;$('bbMake').disabled=!ok||BB.busy;$('bbMakeNote').textContent=BB.manErr?'Tryckfilerna kunde inte hämtas just nu. Prova att ladda om sidan.':!BB.man?'Hämtar tryckfilerna …':!ok?'Den här boken har ingen tryckfil ännu.':'Filerna skapas här i webbläsaren. Det tar några sekunder.';
- bbShowFiles()}
+ bbShowFiles();bbPrRefresh()}
 function bbPeekName(){const o=document.querySelector('#bbPeek .owner');if(o)o.innerHTML=BB.name?`<span class="owner-name">${bbEsc(BB.name)}</span>`:''}
 
 function bbShowFiles(){const R2=$('bbResult');if(!BB.files){R2.hidden=true;R2.innerHTML='';return}R2.hidden=false;
@@ -86,8 +86,8 @@ function bbShowFiles(){const R2=$('bbResult');if(!BB.files){R2.hidden=true;R2.in
 
 let bbDL;function bbDownloads(){if(bbDL===undefined)bbDL=(window.claude&&typeof claude.use==='function')?claude.use('downloads').catch(()=>null):Promise.resolve(null);return bbDL}
 async function bbSave(i){const f=BB.files&&BB.files[i];if(!f)return false;const dl=await bbDownloads();
- if(dl){try{await dl.save({filename:f.name,data:f.blob});f.saved=true;bbShowFiles();return true}catch(e){const c=e&&e.code;if(c==='declined')return false;if(c==='rate_limited'){toast('Spara den förra filen först.');return false}if(!/unavailable|not_granted|capability/.test(c||'')){toast('Filen kunde inte sparas.');return false}}}
- try{const u=URL.createObjectURL(f.blob);const a=document.createElement('a');a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);f.saved=true;bbShowFiles();return true}catch(e){toast('Filen kunde inte sparas här.');return false}}
+ if(dl){try{await dl.save({filename:f.name,data:f.blob});f.saved=true;bbLogSaved();bbShowFiles();return true}catch(e){const c=e&&e.code;if(c==='declined')return false;if(c==='rate_limited'){toast('Spara den förra filen först.');return false}if(!/unavailable|not_granted|capability/.test(c||'')){toast('Filen kunde inte sparas.');return false}}}
+ try{const u=URL.createObjectURL(f.blob);const a=document.createElement('a');a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);f.saved=true;bbLogSaved();bbShowFiles();return true}catch(e){toast('Filen kunde inte sparas här.');return false}}
 
 let PDFLIB=null;function bbPdfLib(){if(!PDFLIB){const s=document.createElement('script');s.textContent=$('pdflibsrc').textContent;document.head.appendChild(s);PDFLIB=window.PDFLib}return PDFLIB}
 async function bbManifest(){if(BB.man||BB.manErr)return;try{const r=await fetch('print/manifest.json',{cache:'no-cache'});if(!r.ok)throw 0;BB.man=await r.json()}catch(e){BB.manErr=true}if(BB.open)bbRender()}
@@ -121,8 +121,27 @@ function bbOpen(bid){BB.bid=bid||(R.b&&R.b.id)||(state.last[state.kid]&&state.la
  $('bbName').value=BB.name;bbKids();$('binderi').hidden=false;document.documentElement.classList.add('bb-open');bbRender();bbManifest();$('binderi').scrollTop=0;setTimeout(()=>$('bbClose').focus(),50)}
 function bbClose(){if(!BB.open)return;BB.open=false;$('binderi').hidden=true;document.documentElement.classList.remove('bb-open')}
 
+/* Utskrivet: märken på hyllan, raden om vald bok och listan per barn. Syns bara för inloggade (prOn i family.js). */
+const BBCHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+function bbLogSaved(){prAdd(bbBook().id,prWho(BB.name),BB.bind,false);bbPrRefresh()}
+const prLatest=rows=>rows.reduce((a,r)=>(+r.at||0)>(+a.at||0)?r:a,rows[0]);
+function bbPrMarks(){const on=prOn(),who=prWho(BB.name);document.querySelectorAll('#bbShelf .bb-pick').forEach(el=>{const m=el.querySelector('.bb-pick-pr');if(!m)return;const rows=on?prFor(el.dataset.bid,who):[];
+ if(!rows.length){m.innerHTML='';return}const l=prLatest(rows);m.innerHTML=BBCHK+(l.nd?'Utskriven':'Utskriven '+prDate(l))})}
+function bbPrLine(){const el=$('bbPrLine');if(!prOn()){el.hidden=true;return}el.hidden=false;const b=bbBook(),who=prWho(BB.name),rows=prFor(b.id,who),nm=who.n?bbEsc(who.n):'';
+ if(!rows.length){el.innerHTML=`${bbEsc(b.title)} är inte utskriven${nm?' för '+nm:''} än. <button type="button" data-pr-mark>Markera som utskriven</button>`;return}
+ const seen=new Map();rows.forEach(r=>{const k=prKey(r);if(!seen.has(k)||(+r.at||0)>(+seen.get(k).at||0))seen.set(k,r)});
+ el.innerHTML=[...seen.values()].map(r=>`Utskriven${r.nd?'':' '+prDate(r)} för ${bbEsc(prName(r))}.`).join(' ')+(nm?` <button type="button" data-pr-del="${bbEsc(b.id+'|'+prKey(who))}">Ta bort markeringen</button>`:'')}
+function bbPrList(){const box=$('bbLog');if(!prOn()){box.hidden=true;return}box.hidden=false;const groups=new Map();
+ prLive().forEach(r=>{const k=prKey(r);if(!groups.has(k))groups.set(k,{name:prName(r),books:new Map()});const g=groups.get(k),o=g.books.get(r.b);if(!o||(+r.at||0)>(+o.at||0))g.books.set(r.b,r)});
+ const total=[...groups.values()].reduce((n,g)=>n+g.books.size,0);$('bbLogN').textContent=total?`${total} ${total>1?'böcker':'bok'}`:'';
+ if(!total){$('bbLogList').innerHTML='<p class="bb-hint">Här samlas böckerna du sparar från Bokbinderiet, barn för barn. Det du redan har skrivit ut kan du markera under Välj bok.</p>';return}
+ $('bbLogList').innerHTML=[...groups.entries()].sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv')).map(([k,g])=>`<h4>${bbEsc(g.name)}</h4><ul>${[...g.books.values()].sort((a,b)=>(+b.at||0)-(+a.at||0)).map(r=>{const t=BOOKS.find(x=>x.id===r.b).title;return `<li><span>${bbEsc(t)}</span><time>${prDate(r)}</time><button type="button" data-pr-del="${bbEsc(r.b+'|'+k)}" aria-label="Ta bort ${bbEsc(t)} från listan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></li>`}).join('')}</ul>`).join('')}
+function bbPrRefresh(){if(!BB.open)return;bbPrMarks();bbPrLine();bbPrList()}
+
 /* händelser */
 $('binderi').addEventListener('click',e=>{const t=e.target;let x;
+ if(t.closest('[data-pr-mark]')){prAdd(bbBook().id,prWho(BB.name),'',true);bbPrRefresh();return}
+ if(x=t.closest('[data-pr-del]')){const i=x.dataset.prDel.indexOf('|');prDel(x.dataset.prDel.slice(0,i),x.dataset.prDel.slice(i+1));bbPrRefresh();return}
  if(x=t.closest('[data-subj]')){BB.subj=x.dataset.subj;bbRender();return}
  if(x=t.closest('[data-bid]')){BB.bid=x.dataset.bid;BB.subj=null;BB.files=null;bbRender();return}
  if(x=t.closest('[data-bind]')){BB.bind=x.dataset.bind;BB.files=null;bbRender();return}
@@ -132,7 +151,7 @@ $('binderi').addEventListener('click',e=>{const t=e.target;let x;
  if(t.closest('#bbCopy')){const txt=$('bbOrder').textContent;const done=()=>toast('Texten är kopierad.');try{navigator.clipboard.writeText(txt).then(done,()=>{bbSelect();toast('Markerad – kopiera med Ctrl+C.')})}catch(err){bbSelect()}return}
  if(t.closest('#bbClose'))bbClose()});
 function bbSelect(){const r=document.createRange();r.selectNodeContents($('bbOrder'));const s=getSelection();s.removeAllRanges();s.addRange(r)}
-$('bbName').addEventListener('input',e=>{BB.name=e.target.value.slice(0,24);BB.nameTouched=true;BB.files=null;bbPeekName();bbShowFiles();bbKidsMark()});
+$('bbName').addEventListener('input',e=>{BB.name=e.target.value.slice(0,24);BB.nameTouched=true;BB.files=null;bbPeekName();bbShowFiles();bbKidsMark();bbPrRefresh()});
 /* Barnen i familjen som snabbval ovanför namnrutan */
 function bbKids(){const el=$('bbKids'),ks=(typeof famReal==='function'?famReal():[]).filter(k=>k.name);el.hidden=!ks.length;el.innerHTML=ks.map(k=>`<button type="button" class="bb-chip" data-kname="${bbEsc(k.name)}">${bbEsc(k.name)}</button>`).join('');bbKidsMark()}
 function bbKidsMark(){const v=BB.name.trim();$('bbKids').querySelectorAll('[data-kname]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.kname===v?'true':'false'))}

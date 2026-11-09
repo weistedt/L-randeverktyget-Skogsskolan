@@ -43,6 +43,7 @@ function save(bid){unsaved=true;if(bid===undefined)bid=curBook();if(bid){const k
 let lastDisk=null;try{lastDisk=localStorage.getItem(KEY)}catch(e){}
 function mergeOtherTab(){let raw=null;try{raw=localStorage.getItem(KEY)}catch(e){return}if(!raw||raw===lastDisk)return;let st=null;try{st=readDisk(raw)}catch(e){return}if(!st)return;
  if(st.fam&&famMerge(st.fam))setTimeout(()=>{try{renderShelf()}catch(e){}});
+ if(st.prints&&prMerge(st.prints))setTimeout(()=>{try{bbPrRefresh()}catch(e){}});
  Object.entries(st.work||{}).forEach(([kid,bs])=>Object.entries(bs||{}).forEach(([bid,W])=>{const L=((state.work[kid]=state.work[kid]||{})[bid]=state.work[kid][bid]||{});Object.entries(W||{}).forEach(([i,w])=>{if(w&&(!L[i]||(w.t||0)>(L[i].t||0)))L[i]=w})}));
  Object.entries(st.done||{}).forEach(([kid,bs])=>Object.entries(bs||{}).forEach(([bid,D])=>{const dd=doneSet(kid,bid);(D||[]).forEach(x=>{if(!dd.includes(x)&&!isUnd(kid,bid,x))dd.push(x)})}));
  Object.entries(st.und||{}).forEach(([k,o])=>{const u=state.und=state.und||{},L=u[k]=u[k]||{};Object.entries(o||{}).forEach(([x,t])=>{if((t||0)>(L[x]||0))L[x]=t})})}
@@ -272,16 +273,19 @@ async function cloudInit(){try{if(!window.claude||typeof claude.use!=='function'
 async function cloudStart(db,uid){try{
  const snap=await db.collection('data/users/'+uid).get();DB=db;UID=uid;let changed=false;const seen=new Set();
  [state.done,state.work].forEach(m=>Object.entries(m||{}).forEach(([kid,bs])=>Object.keys(bs||{}).forEach(bid=>{state.t[kid]=state.t[kid]||{};if(!state.t[kid][bid])state.t[kid][bid]=1})));
- let famSeen=false;snap.docs.forEach(d=>{if(!d.exists)return;if(d.id==='familj'){famSeen=true;if(famMerge(d.data()))changed=true;return}seen.add(d.id);const r=cloudMerge(d.id,d.data());if(!r)return;if(r.changed)changed=true;if(r.push)dirty.add(d.id)});
+ let famSeen=false,prSeen=false;snap.docs.forEach(d=>{if(!d.exists)return;if(d.id==='familj'){famSeen=true;if(famMerge(d.data()))changed=true;return}if(d.id==='utskrifter'){prSeen=true;if(prMerge((d.data()||{}).rows))changed=true;return}seen.add(d.id);const r=cloudMerge(d.id,d.data());if(!r)return;if(r.changed)changed=true;if(r.push)dirty.add(d.id)});
  if(!famSeen&&state.fam.kids.length)famDirty=true;
+ if(!prSeen&&(state.prints||[]).length)prDirty=true;
+ try{bbPrRefresh()}catch(e){}
  Object.entries(state.t).forEach(([kid,m])=>Object.keys(m||{}).forEach(bid=>{if(!seen.has(kid+'~'+bid))dirty.add(kid+'~'+bid)}));
  if(famAfterCloud())changed=true;
  if(changed){famSetKids();cloudApplied()}
  cloudPush();return true}catch(e){DB=null;return false}}
 /* väntar tills allt som väntar har skickats (utloggning) */
-async function cloudSettle(){for(let i=0;i<40&&DB&&(pushing||dirty.size||famDirty);i++){cloudPush(true);await new Promise(r=>setTimeout(r,250))}}
-function cloudPush(now){if(!DB||(!dirty.size&&!famDirty))return;clearTimeout(pushT);const run=async()=>{if(pushing){pushT=setTimeout(run,800);return}pushing=true;const keys=[...dirty];dirty.clear();
+async function cloudSettle(){for(let i=0;i<40&&DB&&(pushing||dirty.size||famDirty||prDirty);i++){cloudPush(true);await new Promise(r=>setTimeout(r,250))}}
+function cloudPush(now){if(!DB||(!dirty.size&&!famDirty&&!prDirty))return;clearTimeout(pushT);const run=async()=>{if(pushing){pushT=setTimeout(run,800);return}pushing=true;const keys=[...dirty];dirty.clear();
  /* familjen först: slå ihop med molnets version och skriv */if(famDirty){famDirty=false;try{const cur=await DB.doc('data/users/'+UID+'/familj').get();if(cur&&cur.exists&&famMerge(cur.data()))setTimeout(()=>{try{renderShelf()}catch(e){}});famDirty=false;await DB.doc('data/users/'+UID+'/familj').set(famCloudBody())}catch(e){famDirty=true;if(e&&/not_granted|revoked|capability|invalid.argument|permission.denied|unauthenticated/.test(e.code||''))DB=null}}
+ /* utskrifterna: samma mönster, ett enda dokument */if(prDirty){prDirty=false;try{const cur=await DB.doc('data/users/'+UID+'/utskrifter').get();if(cur&&cur.exists&&prMerge((cur.data()||{}).rows))setTimeout(()=>{try{bbPrRefresh()}catch(e){}});prDirty=false;await DB.doc('data/users/'+UID+'/utskrifter').set({rows:state.prints||[],t:Date.now()})}catch(e){prDirty=true;if(e&&/not_granted|revoked|capability|invalid.argument|permission.denied|unauthenticated/.test(e.code||''))DB=null}}
  let merged=false;for(const key of keys){const [kid,bid]=key.split('~');const bk=BK(bid);if(!bk)continue;
   /* läs molnets version och slå ihop innan vi skriver: en annan enhet kan ha sparat sedan start */try{const cur=await DB.doc('data/users/'+UID+'/'+key).get();if(cur&&cur.exists){const r=cloudMerge(key,cur.data());if(r&&r.changed)merged=true}}catch(e){}/* rev -1: en äldre app som fortfarande är öppen läser inte de nya nycklarna som sidindex */const body={fmt:2,rev:-1,t:(state.t[kid]||{})[bid]||Date.now(),done:packDone(bk,(state.done[kid]||{})[bid],kid),work:packWork(bk,(state.work[kid]||{})[bid],kid),pos:(state.pos[kid]||{})[bid]||0};
   if(JSON.stringify(body).length>240000){const w={};Object.entries(body.work).forEach(([i,x])=>w[i]={f:x.f||{},s:x.s||[],ink:[],t:x.t||0});body.work=w;body.inkCut=1}

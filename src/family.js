@@ -35,6 +35,27 @@ function famMerge(other){if(!other||!Array.isArray(other.kids))return false;cons
   if(i<0){f.kids.push(Object.assign({},o));ch=true}else if((+o.t||0)>(+f.kids[i].t||0)){f.kids[i]=Object.assign({},o);ch=true}else if((+f.kids[i].t||0)>(+o.t||0))famDirty=true});
  if(f.kids.some(k=>!other.kids.some(o=>o&&o.id===k.id)))famDirty=true;
  f.t=Math.max(+f.t||0,+other.t||0);if(ch){famSetKids();if(famDraft&&famOpenMode==='first'&&famReal().length)famClose()}return ch}
+/* ---------- Utskrivet: vilka böcker som sparats i Bokbinderiet, per barn (bara inloggade) ----------
+   state.prints är en lista med rader {id,b,k,n,bind,at,nd,t,del} och sparas som ett enda dokument, data/users/<uid>/utskrifter.
+   k är barnets id (n = namnet som skrevs, om det inte är ett registrerat barn). nd=1: markerad för hand, datum okänt.
+   Två källor slås ihop rad för rad, nyaste t vinner. Borttagna rader ligger kvar med del=1 så att de inte kommer tillbaka. */
+var prDirty=false;
+function prOn(){return ACCT.kind==='google'||ACCT.kind==='claude'}
+function prKids(){return (state.fam&&state.fam.kids)||[]}
+function prWho(name){const n=String(name||'').trim(),kid=n&&prKids().find(k=>(k.name||'').toLowerCase()===n.toLowerCase());return {k:kid?kid.id:'',n:kid?kid.name:n}}
+function prKey(r){return r.k||('n:'+String(r.n||'').toLowerCase())}
+function prName(r){const kid=r.k&&prKids().find(k=>k.id===r.k);return kid?kid.name:(r.n||'Utan namn')}
+function prLive(){return (state.prints||[]).filter(r=>r&&!r.del&&BOOKS.some(b=>b.id===r.b))}
+function prFor(bid,who){return prLive().filter(r=>r.b===bid&&(!who||(!who.k&&!who.n)||prKey(r)===prKey(who)))}
+function prAdd(bid,who,bind,manual){if(!prOn())return;const now=Date.now(),d=new Date(now),day=[d.getFullYear(),d.getMonth()+1,d.getDate()].join('-');
+ const row={id:[bid,prKey(who),manual?'hand':day].join('~'),b:bid,k:who.k||'',n:who.n||'',bind:bind||'',at:manual?0:now,nd:manual?1:0,t:now,del:0};
+ const L=state.prints=state.prints||[],i=L.findIndex(x=>x.id===row.id);if(i<0)L.push(row);else L[i]=row;prDirty=true;save(null)}
+function prDel(bid,key){const now=Date.now();(state.prints||[]).forEach(r=>{if(r.b===bid&&!r.del&&prKey(r)===key){r.del=1;r.t=now}});prDirty=true;save(null)}
+function prMerge(rows){if(!Array.isArray(rows))return false;const L=state.prints=state.prints||[];let ch=false;
+ rows.forEach(r=>{if(!r||!r.id)return;const i=L.findIndex(x=>x.id===r.id);if(i<0){L.push(Object.assign({},r));ch=true}else if((+r.t||0)>(+L[i].t||0)){L[i]=Object.assign({},r);ch=true}else if((+L[i].t||0)>(+r.t||0))prDirty=true});
+ if(L.some(x=>!rows.some(r=>r&&r.id===x.id)))prDirty=true;return ch}
+function prDate(r){if(r.nd||!r.at)return 'tidigare';const d=new Date(r.at),other=d.getFullYear()!==new Date().getFullYear();return d.toLocaleDateString('sv-SE',other?{day:'numeric',month:'short',year:'numeric'}:{day:'numeric',month:'short'}).replace(/\./g,'')}
+
 function famCloudBody(){return {kids:state.fam.kids.map(k=>({id:k.id,name:k.name,born:k.born,adj:+k.adj||0,t:+k.t||0,hid:k.hid?1:0})),t:+state.fam.t||0}}
 /* anropas när molnets dokument har lästs in: barn som bara finns i gammalt arbete får ett kort */
 function famAfterCloud(){if(famSeedLegacy()){famSetKids();if(famOpenMode==='first'&&famDraft&&!famDraft.touched)famClose();return true}return false}
@@ -106,7 +127,7 @@ function famAcctRender(){const el=$('famAcct');if(!el)return;let h='';
  else if(ACCT.kind==='google-out')h=`<p>Sparas bara i den här webbläsaren.</p><button class="fam-google" id="famIn">${FAM_G}Logga in med Google och spara på alla enheter</button>`;
  else h=`<p>Sparas i den här webbläsaren.</p>`;
  el.innerHTML=h}
-function acctSet(kind,email){ACCT={kind,email:email||''};famAcctRender();msgRender();const c=$('acctChip');if(c){c.hidden=kind!=='google-out'}}
+function acctSet(kind,email){ACCT={kind,email:email||''};famAcctRender();msgRender();try{bbPrRefresh()}catch(e){}const c=$('acctChip');if(c){c.hidden=kind!=='google-out'}}
 
 /* ---------- Firebase (egen webbplats) ---------- */
 var FB=null;
@@ -142,7 +163,7 @@ async function escCopy(){const u=location.href;let ok=false;
 /* utloggning: skicka det sista till molnet, logga ut och töm den här enheten (allt finns kvar i kontot) */
 async function acctSignOut(){if(!FB)return;flush();await cloudSettle();
  /* hann inte allt upp till molnet (inget nät) frågar vi först, och sparar en kopia innan något tas bort */
- let pend=false;try{pend=dirty.size>0||!!famDirty||!!pushing}catch(e){}if(pend&&!confirm('Allt är inte sparat i molnet ännu. Logga ut ändå? Det som inte hunnit sparas finns kvar som en kopia i den här webbläsaren.'))return;
+ let pend=false;try{pend=dirty.size>0||!!famDirty||!!prDirty||!!pushing}catch(e){}if(pend&&!confirm('Allt är inte sparat i molnet ännu. Logga ut ändå? Det som inte hunnit sparas finns kvar som en kopia i den här webbläsaren.'))return;
  try{if(pend)localStorage.setItem(KEY+'-bak-'+Date.now(),localStorage.getItem(KEY)||'')}catch(e){}
  try{await FB.auth.signOut()}catch(e){}try{localStorage.removeItem(KEY)}catch(e){}location.reload()}
 
